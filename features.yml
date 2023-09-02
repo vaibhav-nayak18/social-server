@@ -1,0 +1,77 @@
+
+Main features:
+    creating user.
+    creating group.
+    one and one chat, voice call and video call.
+    group chat, voice call.
+    add, remove user in group and friend. 
+    authorization 
+
+schema:
+    user
+    one and one 
+    group 
+    group chat 
+    one and one chat
+
+    user:
+        name
+        friends[]
+        groups[]
+        password
+        username
+        created At Date 
+        Admin group[]
+        total group number
+        total friends number
+
+    one and one:
+        users  user_id
+        _id 
+
+    one chat:
+        _id
+        user user_id
+        one and one _id
+        message
+        created At
+
+    group:
+        _id
+        users[]
+        created At
+        group creator _id
+        Admin _id
+
+    group chat:
+        _id
+        group _id
+        user _id
+        message
+        created At
+        
+api endpoints:
+    users:
+        login
+        logout
+        signup
+        authenticate
+
+    one and one:
+        get_chat
+        create chat
+        add friend 
+        remove friend  
+
+    group:
+        get_chat
+        create_chat
+        create room
+        join user
+        remove user 
+        leave user
+        invite user
+
+    
+
+    
