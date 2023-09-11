@@ -1,6 +1,8 @@
+import { PORT } from './config/env.js';
 import { server } from './app.js';
+import { connectDb } from './config/database.js';
 
-const PORT = 5000;
+connectDb();
 
 server.listen(PORT, () => {
     console.log(`listening on ${PORT}`);

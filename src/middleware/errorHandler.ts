@@ -17,3 +17,15 @@ export const errorHandler = (error: HttpException, res: Response): void => {
         message,
     });
 };
+
+export function getResult(
+    message: string,
+    statusCode: number,
+    data?: unknown,
+): { statusCode: number; message: string; data: unknown } {
+    return {
+        message: message || 'something went wrong',
+        statusCode: statusCode || 500,
+        data: data || undefined,
+    };
+}
