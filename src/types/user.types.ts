@@ -14,6 +14,7 @@ export interface IUser extends Document {
     password: string;
     friends: Friends[];
     validatePassword: (userInput: string) => Promise<boolean>;
+    getAccessToken: () => Promise<string>;
 }
 
 export const signupInput = zod.object({
@@ -33,12 +34,5 @@ export const loginInput = zod.object({
         .min(6, 'password is too weak. It should be at least 6 char'),
 });
 
-export const authOutput = zod.object({
-    username: zod.string(),
-    firstname: zod.string(),
-    lastname: zod.string(),
-});
-
 export type SignupType = zod.infer<typeof signupInput>;
 export type LoginType = zod.infer<typeof loginInput>;
-export type AuthOutput = zod.infer<typeof authOutput>;

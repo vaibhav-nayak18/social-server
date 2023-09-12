@@ -1,6 +1,8 @@
 import { CallbackWithoutResultAndOptionalError, Schema, model } from 'mongoose';
 import { IUser } from '../types/user.types.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { ACCESS_TOKEN, ACCESS_TOKEN_EXP } from '../config/env.js';
 
 const userSchema = new Schema<IUser>({
     firstname: {
@@ -34,7 +36,7 @@ const userSchema = new Schema<IUser>({
     friends: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Users',
             required: true,
         },
     ],
@@ -61,6 +63,18 @@ userSchema.methods.validatePassword = async function (
     const user = this as IUser;
 
     return await bcrypt.compare(userInput, user.password);
+};
+
+userSchema.methods.getAccessToken = async function () {
+    return jwt.sign(
+        {
+            id: this._id,
+        },
+        ACCESS_TOKEN,
+        {
+            expiresIn: ACCESS_TOKEN_EXP,
+        },
+    );
 };
 
 export const Users = model<IUser>('Users', userSchema);

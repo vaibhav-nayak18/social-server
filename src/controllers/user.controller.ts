@@ -1,38 +1,24 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import {
-    AuthOutput,
+    IUser,
     LoginType,
     SignupType,
     loginInput,
     signupInput,
 } from '../types/user.types.js';
 import { validateInput } from '../middleware/validator.js';
-import { createUser, findUser } from '../services/user.services.js';
-
-/**
- * @route POST / signup
- * @description Create a new user
- * @access public
- *
- * @param { object } req
- * @param {object} res
- *
- *
- * @return { object } An object with cookie and user information
- *
- * @throws {validation Error} If request body is invalid
- * @throws {Error} If something went wrong
- *
- */
-// interface IResponse extends Response {
-//     error?: (code: number, message: string) => Response;
-//     success?: (code: number, message: string, result: unknown) => Response;
-// }
+import {
+    authenticateUser,
+    createUser,
+    findUser,
+} from '../services/user.services.js';
+import { cookieToken } from '../middleware/cookieToken.js';
 
 export const signup = asyncHandler(async (req: Request, res: Response) => {
     const reqBody = req.body;
 
+    // validate user credentials
     const {
         isError: isInvalidate,
         userInput,
@@ -50,41 +36,38 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
         });
     }
 
-    const [isError, { message, statusCode, data }] = (await createUser(
+    // Creating user and if user already exist it return the error else it creates
+    // the user
+    const [isError, { message, statusCode, user }] = (await createUser(
         userInput,
-    )) as [boolean, { message: string; statusCode: number; data?: AuthOutput }];
+    )) as [boolean, { message: string; statusCode: number; user: IUser }];
 
-    if (isError || !data) {
+    if (isError || !user) {
         return res.status(statusCode).json({
             error: true,
             message,
         });
     }
 
+    // attaching cookie to response
+    await cookieToken(user, res);
+
     res.status(200).json({
         error: false,
-        data,
+        user: {
+            username: user.username,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            id: user._id,
+        },
     });
 });
 
-/**
- * @route POST / login
- * @description Verify existing user
- * @access public
- *
- * @param { object } req
- * @param {object} res
- *
- *
- * @return { object } An object with cookie and user information
- *
- * @throws {validation Error} If request body is invalid
- * @throws {Error} If something went wrong
- *
- */
 export const login = asyncHandler(async (req: Request, res: Response) => {
     const reqBody = req.body;
 
+    // validating the credentials if credentials are not matching with requirements
+    // then it return the error
     const {
         isError: isInvalidate,
         userInput,
@@ -102,19 +85,65 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         });
     }
 
-    const [isError, { message, statusCode, data }] = (await findUser(
+    // It searches the user in the db and returns the user if it is present in db
+    // else it throws an error
+    const [isError, { message, statusCode, data: user }] = (await findUser(
         userInput,
-    )) as [boolean, { message: string; statusCode: number; data?: AuthOutput }];
+    )) as [boolean, { message: string; statusCode: number; data: IUser }];
 
-    if (isError || !data) {
+    if (isError || !user) {
         return res.status(statusCode).json({
             error: true,
             message,
         });
     }
 
+    // attaching cookie to response
+    await cookieToken(user, res);
+
     res.status(200).json({
         error: false,
-        data,
+        user: {
+            username: user.username,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            id: user._id,
+        },
     });
 });
+
+export const authenticate = asyncHandler(
+    async (req: Request, res: Response) => {
+        const token = req.cookies.get('access_token');
+
+        if (!token) {
+            return res.status(403).json({
+                error: true,
+                message: 'Token expired. Please login.',
+            });
+        }
+
+        const [isError, { message, statusCode, data: user }] =
+            (await authenticateUser(token)) as [
+                boolean,
+                { message: string; statusCode: number; data: IUser },
+            ];
+
+        if (isError || !user) {
+            return res.status(statusCode).json({
+                error: true,
+                message,
+            });
+        }
+
+        res.status(200).json({
+            error: false,
+            user: {
+                username: user.username,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                id: user._id,
+            },
+        });
+    },
+);
