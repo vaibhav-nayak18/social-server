@@ -19,9 +19,10 @@ app.use(
 app.use(cors());
 app.use(cookieParser());
 
-// Test route
+// auth routes
 app.use('/api/v1', userRoute);
 
+//  test route
 app.get('/', (_req, res) => {
     res.send('Hello World!');
 });
@@ -29,8 +30,5 @@ app.get('/', (_req, res) => {
 // authorizing routes
 app.use(authorize);
 
-app.get('/data', (_req, res) => {
-    res.send('data');
-});
-
+// group routes
 app.use('/api/v1/group', groupRoute);

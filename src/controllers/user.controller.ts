@@ -4,8 +4,8 @@ import {
     IUser,
     LoginType,
     SignupType,
-    loginInput,
-    signupInput,
+    loginSchema,
+    signupSchema,
 } from '../types/user.types.js';
 import { validateInput } from '../middleware/validator.js';
 import {
@@ -23,11 +23,7 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
         isError: isInvalidate,
         userInput,
         message: errorMessage,
-    } = validateInput(reqBody, signupInput) as {
-        isError: boolean;
-        userInput: SignupType;
-        message: string;
-    };
+    } = validateInput<SignupType>(reqBody, signupSchema);
 
     if (isInvalidate) {
         return res.status(400).json({
@@ -72,11 +68,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         isError: isInvalidate,
         userInput,
         message: errorMessage,
-    } = validateInput(reqBody, loginInput) as {
-        isError: boolean;
-        userInput: LoginType;
-        message: string;
-    };
+    } = validateInput<LoginType>(reqBody, loginSchema);
 
     if (isInvalidate) {
         return res.status(400).json({

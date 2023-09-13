@@ -17,7 +17,7 @@ export interface IUser extends Document {
     getAccessToken: () => Promise<string>;
 }
 
-export const signupInput = zod.object({
+export const signupSchema = zod.object({
     firstname: zod.string().min(3, 'firstname should be at least 3 characters'),
     lastname: zod.string().min(1, 'lastname should be at least 3 characters'),
     email: zod.string().email('invalid email format'),
@@ -27,12 +27,12 @@ export const signupInput = zod.object({
         .min(6, 'password is too weak. It should be at least 6 char'),
 });
 
-export const loginInput = zod.object({
+export const loginSchema = zod.object({
     username: zod.string().min(6, 'username should be at least 6 characters'),
     password: zod
         .string()
         .min(6, 'password is too weak. It should be at least 6 char'),
 });
 
-export type SignupType = zod.infer<typeof signupInput>;
-export type LoginType = zod.infer<typeof loginInput>;
+export type SignupType = zod.infer<typeof signupSchema>;
+export type LoginType = zod.infer<typeof loginSchema>;

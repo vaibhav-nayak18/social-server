@@ -18,14 +18,20 @@ export const errorHandler = (error: HttpException, res: Response): void => {
     });
 };
 
-export function getResult(
+export type resultType<T> = {
+    message: string;
+    statusCode: number;
+    data?: T;
+};
+
+export function getResult<T>(
     message: string,
     statusCode: number,
-    data?: unknown,
-): { statusCode: number; message: string; data: unknown } {
+    data?: T,
+): resultType<T> {
     return {
         message: message || 'something went wrong',
         statusCode: statusCode || 500,
-        data: data || undefined,
+        data: (data as T) || undefined,
     };
 }
