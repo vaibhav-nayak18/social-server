@@ -1,10 +1,12 @@
-import { type Request, type Response } from 'express';
-import { asyncHandler } from '../middleware/asyncHandler.js';
-import { loginType, registerType } from '../types/user.type.js';
-import { validateInput } from '../middleware/validator.js';
-import { loginSchema, registerSchema } from '../validators/user.schema.js';
-import { createUser, getUser, getUserById } from '../services/auth.services.js';
-import jwt from 'jsonwebtoken';
+import { type Request, type Response } from "express";
+import { asyncHandler } from "../middleware/asyncHandler.js";
+import { loginType, registerType } from "../types/user.type.js";
+import { validateInput } from "../middleware/validator.js";
+import { loginSchema, registerSchema } from "../validators/user.schema.js";
+import { createUser, getUser, getUserById } from "../services/auth.services.js";
+import jwt from "jsonwebtoken";
+import { cookieToken } from "../middleware/cookieToken.js";
+import client from "../redis/client.js";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body as loginType;
@@ -21,24 +23,43 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const { data, is_Error, errorMessage, statusCode } = await getUser(
-    verifiedData,
-  );
+  const {
+    data: user,
+    is_Error,
+    errorMessage,
+    statusCode,
+  } = await getUser(verifiedData);
+
+  if (is_Error || !user) {
+    return res.status(statusCode).json({
+      message: errorMessage,
+      isError: is_Error,
+      user,
+    });
+  }
+
+  await cookieToken(user, res);
 
   return res.status(statusCode).json({
     message: errorMessage,
     isError: is_Error,
-    data,
+    data: {
+      username: user.username,
+      id: user._id,
+    },
   });
 });
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body as registerType;
+  console.log(body);
 
   const { isError, message, verifiedData } = validateInput<registerType>(
     body,
     registerSchema,
   );
+
+  console.log(verifiedData);
 
   if (isError) {
     return res.status(400).json({
@@ -47,40 +68,98 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const { data, is_Error, errorMessage, statusCode } = await createUser(
-    verifiedData,
-  );
+  const {
+    data: user,
+    is_Error,
+    errorMessage,
+    statusCode,
+  } = await createUser(verifiedData);
+
+  if (is_Error || !user) {
+    return res.status(statusCode).json({
+      message: errorMessage,
+      isError: is_Error,
+      user,
+    });
+  }
+
+  await cookieToken(user, res);
 
   return res.status(statusCode).json({
     message: errorMessage,
     isError: is_Error,
-    data,
+    data: {
+      username: user.username,
+      id: user._id,
+    },
   });
 });
 
 export const authenticateUser = asyncHandler(
   async (req: Request, res: Response) => {
-    let token = req.cookies.access_token || req.headers.authorization;
+    let token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1M2MxMTU1MmYyNzZhYTExNTUyNjllNyIsImlhdCI6MTY5ODUyMTIzMSwiZXhwIjoxNjk5MTI2MDMxfQ.RBP6g2w-89t0vhnNt7kkifJTyBKWovwEuyxkGMpQm7c";
 
-    if (!token) {
-      token = req.body.access_token;
-    }
+    // if (!token) {
+    //   token = req.body?.access_token;
+    // }
 
     if (!token) {
       return res.status(403).json({
         isError: true,
-        message: 'please login',
+        message: "please login",
       });
     }
 
-    const id = jwt.decode(token) as string | null;
+    const payload = jwt.decode(token) as { id: string };
 
-    const { data, errorMessage, is_Error, statusCode } = await getUserById(id);
+    if (!payload || !payload.id) {
+      return res.status(403).json({
+        isError: true,
+        message: "please login again",
+      });
+    }
+
+    const cacheUser = await client.get(`user:${payload.id}`);
+
+    if (cacheUser) {
+      const user = JSON.parse(cacheUser);
+      return res.status(200).json({
+        message: "success",
+        isError: false,
+        data: {
+          username: user.username,
+          id: user._id,
+        },
+      });
+    }
+
+    const {
+      data: user,
+      errorMessage,
+      is_Error,
+      statusCode,
+    } = await getUserById(payload.id);
+
+    if (is_Error || !user) {
+      return res.status(statusCode).json({
+        message: errorMessage,
+        isError: is_Error,
+        user,
+      });
+    }
+
+    const userString = JSON.stringify(user);
+
+    await client.set(`user:${payload.id}`, userString);
 
     return res.status(statusCode).json({
       message: errorMessage,
       isError: is_Error,
-      data,
+      data: {
+        username: user.username,
+        id: user._id,
+      },
     });
   },
 );

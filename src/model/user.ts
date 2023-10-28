@@ -21,11 +21,6 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
   },
-
-  name: {
-    type: String,
-    required: true,
-  },
 });
 
 userSchema.pre(
@@ -47,7 +42,6 @@ userSchema.methods.validatePassword = async function (
   userInput: string,
 ): Promise<boolean> {
   const user = this as IUser;
-
   return await bcrypt.compare(userInput, user.password);
 };
 

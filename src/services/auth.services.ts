@@ -1,5 +1,6 @@
 import { Users } from '../model/user.js';
-import { loginType, registerType } from '../types/user.type.js';
+import { IUser, loginType, registerType } from '../types/user.type.js';
+import client from '../redis/client.js';
 
 export async function createUser(userInput: registerType) {
   if (!userInput) {
@@ -79,6 +80,7 @@ export async function getUserById(userId: string | null) {
       statusCode: 404,
     };
   }
+
   const user = await Users.findById(userId);
 
   if (!user) {
