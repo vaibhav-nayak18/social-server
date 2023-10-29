@@ -22,6 +22,7 @@ export async function createUser(userInput: registerType) {
     };
   }
 
+  user.password = undefined;
   return {
     is_Error: false,
     errorMessage: 'success',
@@ -63,6 +64,7 @@ export async function getUser(userInput: loginType) {
     };
   }
 
+  user.password = undefined;
   return {
     is_Error: false,
     errorMessage: 'success',
@@ -91,6 +93,8 @@ export async function getUserById(userId: string | null) {
       statusCode: 404,
     };
   }
+
+  user.password = undefined;
 
   return {
     is_Error: false,

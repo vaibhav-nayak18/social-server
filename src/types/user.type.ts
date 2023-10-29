@@ -5,7 +5,7 @@ import { Request } from 'express';
 
 export interface IUser extends Document {
   username: string;
-  password: string;
+  password?: string;
   email: string;
   validatePassword: (userInput: string) => Promise<boolean>;
   getAccessToken: () => Promise<string>;

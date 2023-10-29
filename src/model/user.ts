@@ -28,6 +28,10 @@ userSchema.pre(
   async function (next: CallbackWithoutResultAndOptionalError) {
     const user = this as IUser;
 
+    if (!user.password) {
+      return next();
+    }
+
     if (user.isModified('password')) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(user.password, salt);
@@ -42,6 +46,9 @@ userSchema.methods.validatePassword = async function (
   userInput: string,
 ): Promise<boolean> {
   const user = this as IUser;
+  if (!user.password) {
+    return false;
+  }
   return await bcrypt.compare(userInput, user.password);
 };
 

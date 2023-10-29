@@ -1,6 +1,6 @@
-import { Response } from "express";
-import { ACCESS_TOKEN_EXP } from "../config/env.js";
-import { IUser } from "../types/user.type.js";
+import { Response } from 'express';
+import { ACCESS_TOKEN_EXP } from '../config/env.js';
+import { IUser } from '../types/user.type.js';
 
 export async function cookieToken(user: IUser, res: Response): Promise<void> {
   const token = await user.getAccessToken();
@@ -13,5 +13,7 @@ export async function cookieToken(user: IUser, res: Response): Promise<void> {
     secure: true,
   };
 
-  res.cookie("access_token", token, option);
+  res.cookie('access_token', token, {
+    ...option,
+  });
 }
