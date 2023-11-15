@@ -1,5 +1,6 @@
 import { Document, Types } from 'mongoose';
 import * as z from 'zod';
+
 import { groupSchema } from '../validators/group.schema.js';
 
 export interface IGroup extends Document {

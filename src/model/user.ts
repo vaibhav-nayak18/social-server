@@ -1,8 +1,9 @@
 import { CallbackWithoutResultAndOptionalError, Schema, model } from 'mongoose';
-import { IUser } from '../types/user.type.js';
-import { ACCESS_TOKEN, ACCESS_TOKEN_EXP } from '../config/env.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+
+import { IUser } from '../types/user.type.js';
+import { ACCESS_TOKEN, ACCESS_TOKEN_EXP } from '../config/env.js';
 
 const userSchema = new Schema<IUser>({
   username: {

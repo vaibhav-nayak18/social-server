@@ -1,6 +1,5 @@
 import { Users } from '../model/user.js';
-import { IUser, loginType, registerType } from '../types/user.type.js';
-import client from '../redis/client.js';
+import { loginType, registerType } from '../types/user.type.js';
 
 export async function createUser(userInput: registerType) {
   if (!userInput) {
