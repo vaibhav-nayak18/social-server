@@ -1,19 +1,20 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import cors from "cors";
 
-import { createServer } from 'http';
-import { userRoute } from './routes/auth.route.js';
-import cookieParser from 'cookie-parser';
-import { authorizationUser } from './middleware/authenticateUser.js';
-import { UserRequest } from './types/user.type.js';
-import { groupRoute } from './routes/group.route.js';
+import { createServer } from "http";
+import { userRoute } from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
+import { authorizationUser } from "./middleware/authenticateUser.js";
+import { UserRequest } from "./types/user.type.js";
+import { groupRoute } from "./routes/group.route.js";
+import { dmRoute } from "./routes/dm.route.js";
 
 export const app = express();
 export const server = createServer(app);
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );
@@ -26,24 +27,27 @@ app.use(
 app.use(cookieParser());
 
 //  test routes
-app.get('/', (_req, res) => {
+app.get("/", (_req, res) => {
   res.status(200).json({
-    message: 'hello world!',
+    message: "hello world!",
   });
 });
 
 // auth routes
-app.use('/api/v1/auth', userRoute);
+app.use("/api/v1/auth", userRoute);
 
 // authorizing users middleware
 app.use(authorizationUser);
 
+// DM routes
+app.use("/api/v1/dm", dmRoute);
+
 //group routes
-app.use('/api/v1/group', groupRoute);
+app.use("/api/v1/group", groupRoute);
 
 // health check route
-app.get('/health', (_req: UserRequest, res) => {
+app.get("/health", (_req: UserRequest, res) => {
   res.status(200).json({
-    message: 'This is the health message',
+    message: "This is the health message",
   });
 });

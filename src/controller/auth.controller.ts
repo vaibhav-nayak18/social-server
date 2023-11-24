@@ -1,12 +1,12 @@
-import { type Request, type Response } from 'express';
-import { asyncHandler } from '../middleware/asyncHandler.js';
-import { loginType, registerType } from '../types/user.type.js';
-import { validateInput } from '../middleware/validator.js';
-import { loginSchema, registerSchema } from '../validators/user.schema.js';
-import { createUser, getUser, getUserById } from '../services/auth.services.js';
-import jwt from 'jsonwebtoken';
-import { cookieToken } from '../middleware/cookieToken.js';
-import client from '../redis/client.js';
+import { type Request, type Response } from "express";
+import { asyncHandler } from "../middleware/asyncHandler.js";
+import { loginType, registerType } from "../types/user.type.js";
+import { validateInput } from "../middleware/validator.js";
+import { loginSchema, registerSchema } from "../validators/user.schema.js";
+import { createUser, getUser, getUserById } from "../services/auth.services.js";
+import jwt from "jsonwebtoken";
+import { cookieToken } from "../middleware/cookieToken.js";
+import client from "../redis/client.js";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body as loginType;
@@ -34,7 +34,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     return res.status(statusCode).json({
       message: errorMessage,
       isError: is_Error,
-      user,
     });
   }
 
@@ -79,7 +78,6 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     return res.status(statusCode).json({
       message: errorMessage,
       isError: is_Error,
-      user,
     });
   }
 
@@ -99,12 +97,12 @@ export const authenticateUser = asyncHandler(
   async (req: Request, res: Response) => {
     const token =
       req.cookies?.access_token ||
-      req.headers['authorization']?.replace('Bearer ', '');
+      req.headers["authorization"]?.replace("Bearer ", "");
 
     if (!token) {
       return res.status(403).json({
         isError: true,
-        message: 'please login',
+        message: "please login",
       });
     }
 
@@ -113,7 +111,7 @@ export const authenticateUser = asyncHandler(
     if (!payload || !payload.id) {
       return res.status(403).json({
         isError: true,
-        message: 'please login again',
+        message: "please login again",
       });
     }
 
@@ -122,7 +120,7 @@ export const authenticateUser = asyncHandler(
     if (cacheUser) {
       const user = JSON.parse(cacheUser);
       return res.status(200).json({
-        message: 'success',
+        message: "success",
         isError: false,
         data: {
           username: user.username,
@@ -142,7 +140,6 @@ export const authenticateUser = asyncHandler(
       return res.status(statusCode).json({
         message: errorMessage,
         isError: is_Error,
-        user,
       });
     }
 

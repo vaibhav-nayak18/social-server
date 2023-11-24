@@ -1,7 +1,7 @@
-import { Document, Types } from 'mongoose';
-import * as z from 'zod';
+import { Document, Types } from "mongoose";
+import * as z from "zod";
 
-import { groupSchema } from '../validators/group.schema.js';
+import { groupSchema } from "../validators/group.schema.js";
 
 export interface IGroup extends Document {
   name: string;
@@ -14,3 +14,5 @@ export type groupType = {
   id: Types.ObjectId;
   name: string;
 };
+
+export type createGroupType = z.infer<typeof groupSchema>;
