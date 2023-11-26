@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
-import { IGroup } from '../types/group.type.js';
+import { IGroup } from "../types/group.type.js";
 
 const groupSchema = new Schema<IGroup>({
   name: {
@@ -14,4 +14,4 @@ const groupSchema = new Schema<IGroup>({
   users: [Schema.Types.ObjectId],
 });
 
-export const Groups = model<IGroup>('Group', groupSchema);
+export const Groups = model<IGroup>("Group", groupSchema);

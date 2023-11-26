@@ -1,8 +1,8 @@
-import { Document } from 'mongoose';
-import * as z from 'zod';
-import { Request } from 'express';
+import { Document } from "mongoose";
+import * as z from "zod";
+import { Request } from "express";
 
-import { loginSchema, registerSchema } from '../validators/user.schema.js';
+import { loginSchema, registerSchema } from "../validators/user.schema.js";
 export interface IUser extends Document {
   username: string;
   password?: string;
