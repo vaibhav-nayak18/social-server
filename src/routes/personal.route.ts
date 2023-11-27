@@ -2,9 +2,10 @@ import express from "express";
 import {
   acceptFriendRequest,
   declineFriendRequest,
+  getPersonalMessage,
   removeFriend,
   sendFriendRequest,
-} from "../controller/notification.controller.js";
+} from "../controller/personal.controller.js";
 
 export const personalRoute = express.Router();
 
@@ -15,3 +16,4 @@ personalRoute.delete("/decline", declineFriendRequest);
 
 // should be friend
 personalRoute.delete("/remove", removeFriend);
+personalRoute.get("/chats", getPersonalMessage);

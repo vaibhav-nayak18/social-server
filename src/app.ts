@@ -37,6 +37,13 @@ app.get("/", (_req, res) => {
   });
 });
 
+// health check route
+app.get("/health", (_req: UserRequest, res) => {
+  res.status(200).json({
+    message: "This is the health message",
+  });
+});
+
 // auth routes
 app.use("/api/v1/auth", authRoute);
 
@@ -51,10 +58,3 @@ app.use("/api/v1/notification", personalRoute);
 
 //group routes
 app.use("/api/v1/group", groupRoute);
-
-// health check route
-app.get("/health", (_req: UserRequest, res) => {
-  res.status(200).json({
-    message: "This is the health message",
-  });
-});
