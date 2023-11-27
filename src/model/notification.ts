@@ -6,14 +6,22 @@ const notificationSchema = new Schema<INotification>({
     type: String,
     required: true,
   },
+
   type: {
     type: String,
     required: true,
   },
+
   senderId: {
     type: Schema.Types.ObjectId,
     ref: "Users",
     required: true,
+  },
+
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
   },
 });
 

@@ -1,9 +1,9 @@
-import { CallbackWithoutResultAndOptionalError, Schema, model } from 'mongoose';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import { CallbackWithoutResultAndOptionalError, Schema, model } from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
-import { IUser } from '../types/user.type.js';
-import { ACCESS_TOKEN, ACCESS_TOKEN_EXP } from '../config/env.js';
+import { IUser } from "../types/user.type.js";
+import { ACCESS_TOKEN, ACCESS_TOKEN_EXP } from "../config/env.js";
 
 const userSchema = new Schema<IUser>({
   username: {
@@ -22,10 +22,17 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
   },
+
+  notifications: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Notifications",
+    },
+  ],
 });
 
 userSchema.pre(
-  'save',
+  "save",
   async function (next: CallbackWithoutResultAndOptionalError) {
     const user = this as IUser;
 
@@ -33,7 +40,7 @@ userSchema.pre(
       return next();
     }
 
-    if (user.isModified('password')) {
+    if (user.isModified("password")) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(user.password, salt);
       user.password = hash;
@@ -65,4 +72,4 @@ userSchema.methods.getAccessToken = async function () {
   );
 };
 
-export const Users = model<IUser>('Users', userSchema);
+export const Users = model<IUser>("Users", userSchema);

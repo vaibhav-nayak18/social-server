@@ -7,11 +7,19 @@ const groupSchema = new Schema<IGroup>({
     type: String,
     required: true,
   },
+
   admin: {
     type: Schema.Types.ObjectId,
+    ref: "Users",
     required: true,
   },
-  users: [Schema.Types.ObjectId],
+
+  users: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Users",
+    },
+  ],
 });
 
 export const Groups = model<IGroup>("Group", groupSchema);

@@ -7,6 +7,7 @@ const personalChatSchema = new Schema<IPersonalChat>({
     ref: "Users",
     required: true,
   },
+
   receiver: {
     type: Schema.Types.ObjectId,
     ref: "Users",

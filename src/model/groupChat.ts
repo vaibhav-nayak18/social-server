@@ -5,9 +5,12 @@ const groupChatSchema = new Schema<IGroupChat>({
   sender: {
     type: Schema.Types.ObjectId,
     required: true,
+    ref: "Users",
   },
+
   groupId: {
     type: Schema.Types.ObjectId,
+    ref: "Groups",
     required: true,
   },
 
