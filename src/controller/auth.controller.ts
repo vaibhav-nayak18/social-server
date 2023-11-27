@@ -6,7 +6,7 @@ import { loginSchema, registerSchema } from "../validators/user.schema.js";
 import { createUser, getUser, getUserById } from "../services/auth.services.js";
 import jwt from "jsonwebtoken";
 import { cookieToken } from "../middleware/cookieToken.js";
-import client from "../redis/client.js";
+import redis from "../config/redis.js";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body as loginType;
@@ -115,7 +115,7 @@ export const authenticateUser = asyncHandler(
       });
     }
 
-    const cacheUser = await client.get(`user:${payload.id}`);
+    const cacheUser = await redis.get(`user:${payload.id}`);
 
     if (cacheUser) {
       const user = JSON.parse(cacheUser);
@@ -145,7 +145,7 @@ export const authenticateUser = asyncHandler(
 
     const userString = JSON.stringify(user);
 
-    await client.set(`user:${payload.id}`, userString);
+    await redis.set(`user:${payload.id}`, userString);
 
     return res.status(statusCode).json({
       message: errorMessage,
