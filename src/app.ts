@@ -2,19 +2,23 @@ import express from "express";
 import cors from "cors";
 
 import { createServer } from "http";
-import { userRoute } from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import { authorizationUser } from "./middleware/authenticateUser.js";
 import { UserRequest } from "./types/user.type.js";
-import { groupRoute } from "./routes/group.route.js";
-import { dmRoute } from "./routes/dm.route.js";
+import { ORIGIN } from "./config/env.js";
+import {
+  authRoute,
+  userRoute,
+  groupRoute,
+  personalRoute,
+} from "./routes/index.js";
 
 export const app = express();
 export const server = createServer(app);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ORIGIN,
     credentials: true,
   }),
 );
@@ -34,13 +38,16 @@ app.get("/", (_req, res) => {
 });
 
 // auth routes
-app.use("/api/v1/auth", userRoute);
+app.use("/api/v1/auth", authRoute);
 
 // authorizing users middleware
 app.use(authorizationUser);
 
-// DM routes
-app.use("/api/v1/dm", dmRoute);
+// user routes
+app.use("/api/v1/user", userRoute);
+
+// personal routes
+app.use("/api/v1/notification", personalRoute);
 
 //group routes
 app.use("/api/v1/group", groupRoute);

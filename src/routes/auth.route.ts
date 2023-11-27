@@ -1,13 +1,13 @@
-import express from 'express';
+import express from "express";
 
 import {
   authenticateUser,
   login,
   register,
-} from '../controller/auth.controller.js';
+} from "../controller/auth.controller.js";
 
-export const userRoute = express.Router();
+export const authRoute = express.Router();
 
-userRoute.post('/login', login);
-userRoute.post('/register', register);
-userRoute.get('/authenticate', authenticateUser);
+authRoute.post("/login", login);
+authRoute.post("/register", register);
+authRoute.get("/authenticate", authenticateUser);

@@ -2,7 +2,7 @@ import { Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { IUser, UserRequest } from "../types/user.type.js";
 
-export const sendFriendRequest = asyncHandler(
+export const getAllNotification = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -24,7 +24,7 @@ export const sendFriendRequest = asyncHandler(
   },
 );
 
-export const removeFriend = asyncHandler(
+export const updateProfile = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -34,6 +34,7 @@ export const removeFriend = asyncHandler(
         message: "please login",
       });
     }
+
     const { friendId } = req.body;
 
     if (!friendId) {
@@ -45,7 +46,7 @@ export const removeFriend = asyncHandler(
   },
 );
 
-export const acceptFriendRequest = asyncHandler(
+export const deleteUser = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -56,34 +57,12 @@ export const acceptFriendRequest = asyncHandler(
       });
     }
 
-    const { requestId } = req.body;
+    const { friendId } = req.body;
 
-    if (!requestId) {
+    if (!friendId) {
       return res.status(400).json({
         isError: true,
-        message: "please send request id",
-      });
-    }
-  },
-);
-
-export const declineFriendRequest = asyncHandler(
-  async (req: UserRequest, res: Response) => {
-    const user = req.user as IUser;
-
-    if (!user) {
-      return res.status(403).json({
-        isError: true,
-        message: "please login",
-      });
-    }
-
-    const { requestId } = req.body;
-
-    if (!requestId) {
-      return res.status(400).json({
-        isError: true,
-        message: "please send request id",
+        message: "please send another user id",
       });
     }
   },
