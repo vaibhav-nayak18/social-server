@@ -1,8 +1,13 @@
 import { Response } from "express";
 
-export const successResponse = (res: Response, message: string = "success") => {
+export const successResponse = (
+  res: Response,
+  data?: unknown,
+  message: string = "success",
+) => {
   return res.status(200).json({
     isError: false,
+    data,
     message,
   });
 };
@@ -16,4 +21,18 @@ export const errorResponse = (
     isError: true,
     message,
   });
+};
+
+export const serviceResult = (
+  is_error: boolean,
+  message: string,
+  status: number,
+  data?: unknown,
+) => {
+  return {
+    is_error,
+    errorMessage: message,
+    statusCode: status,
+    data,
+  };
 };

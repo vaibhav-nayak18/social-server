@@ -5,16 +5,16 @@ import { IUser, UserRequest } from "../types/user.type.js";
 import { validateInput } from "../middleware/validator.js";
 import { createGroupType } from "../types/group.type.js";
 import { groupSchema } from "../validators/group.schema.js";
+import { errorResponse, successResponse } from "../util/response.js";
+import { createGroup, joinGroup } from "../services/group.services.js";
+import mongoose, { Types } from "mongoose";
 
 export const createGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
     if (!user) {
-      return res.status(403).json({
-        isError: true,
-        message: "please login",
-      });
+      return errorResponse(res, 403, "please login");
     }
 
     const body = req.body;
@@ -24,11 +24,20 @@ export const createGroupController = asyncHandler(
     );
 
     if (isError || !verifiedData) {
-      return res.status(400).json({
-        isError,
-        message,
-      });
+      return errorResponse(res, 400, message);
     }
+
+    const {
+      errorMessage,
+      is_error,
+      data: groups,
+      statusCode,
+    } = await createGroup(verifiedData, user._id);
+    if (is_error || !groups) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, groups);
   },
 );
 
@@ -37,20 +46,27 @@ export const joinGroupController = asyncHandler(
     const user = req.user as IUser;
 
     if (!user) {
-      return res.status(403).json({
-        isError: true,
-        message: "please login",
-      });
+      return errorResponse(res, 403, "please login");
     }
 
-    const { groupId } = req.params as { groupId: string };
+    const { groupId } = req.params as {
+      groupId: string;
+    };
 
     if (!groupId) {
-      return res.status(400).json({
-        isError: true,
-        message: "please send group id in url",
-      });
+      return errorResponse(res, 400, "please send group id in url");
     }
+
+    const { is_error, statusCode, errorMessage } = await joinGroup(
+      groupId,
+      user._id,
+    );
+
+    if (!is_error) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res);
   },
 );
 
@@ -59,20 +75,16 @@ export const leaveGroupController = asyncHandler(
     const user = req.user as IUser;
 
     if (!user) {
-      return res.status(403).json({
-        isError: true,
-        message: "please login",
-      });
+      return errorResponse(res, 403, "please login");
     }
 
     const { groupId } = req.params;
 
     if (!groupId) {
-      return res.status(400).json({
-        isError: true,
-        message: "please send group id in url",
-      });
+      return errorResponse(res, 400, "please send group id in url");
     }
+
+    successResponse(res);
   },
 );
 
@@ -81,20 +93,16 @@ export const removeMemberController = asyncHandler(
     const user = req.user as IUser;
 
     if (!user) {
-      return res.status(403).json({
-        isError: true,
-        message: "please login",
-      });
+      return errorResponse(res, 403, "please login");
     }
     const { groupId } = req.params;
     const { id } = req.body;
 
     if (!groupId || !id) {
-      return res.status(400).json({
-        isError: true,
-        message: "please send groupid and id",
-      });
+      return errorResponse(res, 400, "please send groupid and id");
     }
+
+    successResponse(res);
   },
 );
 
@@ -103,19 +111,15 @@ export const getMessagesController = asyncHandler(
     const user = req.user as IUser;
 
     if (!user) {
-      return res.status(403).json({
-        isError: true,
-        message: "please login",
-      });
+      return errorResponse(res, 403, "please login");
     }
 
     const { groupId } = req.params;
 
     if (!groupId) {
-      return res.status(400).json({
-        isError: true,
-        message: "please send group id in url",
-      });
+      return errorResponse(res, 400, "please send groupid and id");
     }
+
+    successResponse(res);
   },
 );
