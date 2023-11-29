@@ -8,7 +8,6 @@ import {
   leaveGroupController,
   removeMemberController,
 } from "../controller/group.controller.js";
-import { isGroupAdmin } from "../middleware/groupAdmin.js";
 
 export const groupRoute = express.Router();
 
@@ -17,7 +16,7 @@ groupRoute.post("/create", createGroupController);
 groupRoute.post("/join", joinGroupController);
 
 // Only accessible to group admin
-groupRoute.post("/remove", isGroupAdmin, removeMemberController);
+groupRoute.post("/remove", removeMemberController);
 
 // only group members can access
 groupRoute.post("/leave", leaveGroupController);

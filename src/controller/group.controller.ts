@@ -122,6 +122,7 @@ export const removeMemberController = asyncHandler(
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);
     }
+
     successResponse(res, data, errorMessage);
   },
 );
