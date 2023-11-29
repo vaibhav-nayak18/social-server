@@ -17,3 +17,10 @@ export const groupSchema = z.object({
     .min(6, "Category should be 6 or more characters")
     .max(20, "Category should be 20 or less characters"),
 });
+
+export const messageSchema = z.object({
+  message: z
+    .string({ description: "Message should not be empty" })
+    .min(1, "message shouldn't be empty")
+    .max(80, "character limit exceeded. limit is 80"),
+});

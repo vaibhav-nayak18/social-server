@@ -4,14 +4,16 @@ import { asyncHandler } from "../middleware/asyncHandler.js";
 import { IUser, UserRequest } from "../types/user.type.js";
 import { validateInput } from "../middleware/validator.js";
 import { createGroupType } from "../types/group.type.js";
-import { groupSchema } from "../validators/group.schema.js";
+import { groupSchema, messageSchema } from "../validators/group.schema.js";
 import { errorResponse, successResponse } from "../util/response.js";
 import {
   createGroup,
+  createMessage,
   joinGroup,
   leaveGroup,
   removeFromTheGroup,
 } from "../services/group.services.js";
+import { string } from "zod";
 
 export const createGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
@@ -140,5 +142,42 @@ export const getMessagesController = asyncHandler(
     }
 
     successResponse(res);
+  },
+);
+
+export const createMessageController = asyncHandler(
+  async (req: UserRequest, res: Response) => {
+    const user = req.user as IUser;
+
+    if (!user) {
+      return errorResponse(res, 403, "please login");
+    }
+
+    const { groupId } = req.params;
+    const body = req.body as { message: string };
+
+    const { message, isError, verifiedData } = validateInput<{
+      message: string;
+    }>(body, messageSchema);
+
+    if (isError || !verifiedData) {
+      return errorResponse(res, 403, message);
+    }
+
+    if (!groupId) {
+      return errorResponse(res, 400, "please send groupid and id");
+    }
+
+    const { data, is_error, statusCode, errorMessage } = await createMessage(
+      message,
+      groupId,
+      user._id,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );

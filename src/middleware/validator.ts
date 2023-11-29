@@ -1,4 +1,4 @@
-import { AnyZodObject } from 'zod';
+import { AnyZodObject } from "zod";
 
 type validateType<T> = {
   isError: boolean;
@@ -6,7 +6,7 @@ type validateType<T> = {
   verifiedData: T;
 };
 
-// This function validate user input in runtime and ensure all the data is valid
+/** This function validate user input in runtime and ensure all the data is valid */
 export function validateInput<T>(
   input: T,
   schema: AnyZodObject,
@@ -16,7 +16,7 @@ export function validateInput<T>(
   if (result.success) {
     return {
       isError: false,
-      message: 'Success',
+      message: "Success",
       verifiedData: result.data as T,
     };
   }

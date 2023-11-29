@@ -1,9 +1,12 @@
 import { Types } from "mongoose";
+
 import { Groups } from "../model/group.js";
 import { IGroup, createGroupType } from "../types/group.type.js";
 import { serviceResult } from "../util/response.js";
 import { Users } from "../model/user.js";
 import { IUser } from "../types/user.type.js";
+import { GroupChats } from "../model/groupChat.js";
+import { IGroupChat } from "../types/chat.type.js";
 
 export async function createGroup(userInput: createGroupType, userId: string) {
   let groups = (await Groups.findOne({ name: userInput.group_name })) as IGroup;
@@ -103,4 +106,26 @@ export async function removeFromTheGroup(
   return serviceResult(false, "successfully removed The user the group", 200, {
     username: removedUser.username,
   });
+}
+
+export async function createMessage(
+  message: string,
+  groupId: string,
+  userId: Types.ObjectId,
+) {
+  let groupChat = (await GroupChats.create({
+    groupId,
+    sender: userId,
+    message,
+  })) as IGroupChat;
+
+  if (!groupChat) {
+    return serviceResult(
+      true,
+      "something went wrong please send this message again",
+      500,
+    );
+  }
+
+  return serviceResult(false, "message sent", 200, GroupChats);
 }

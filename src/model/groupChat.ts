@@ -8,6 +8,11 @@ const groupChatSchema = new Schema<IGroupChat>({
     ref: "Users",
   },
 
+  message: {
+    type: String,
+    required: true,
+  },
+
   groupId: {
     type: Schema.Types.ObjectId,
     ref: "Groups",
