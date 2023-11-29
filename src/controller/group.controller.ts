@@ -6,8 +6,12 @@ import { validateInput } from "../middleware/validator.js";
 import { createGroupType } from "../types/group.type.js";
 import { groupSchema } from "../validators/group.schema.js";
 import { errorResponse, successResponse } from "../util/response.js";
-import { createGroup, joinGroup } from "../services/group.services.js";
-import mongoose, { Types } from "mongoose";
+import {
+  createGroup,
+  joinGroup,
+  leaveGroup,
+  removeFromTheGroup,
+} from "../services/group.services.js";
 
 export const createGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
@@ -33,6 +37,7 @@ export const createGroupController = asyncHandler(
       data: groups,
       statusCode,
     } = await createGroup(verifiedData, user._id);
+
     if (is_error || !groups) {
       return errorResponse(res, statusCode, errorMessage);
     }
@@ -84,7 +89,16 @@ export const leaveGroupController = asyncHandler(
       return errorResponse(res, 400, "please send group id in url");
     }
 
-    successResponse(res);
+    const { data, is_error, statusCode, errorMessage } = await leaveGroup(
+      groupId,
+      user._id,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );
 
@@ -95,14 +109,19 @@ export const removeMemberController = asyncHandler(
     if (!user) {
       return errorResponse(res, 403, "please login");
     }
-    const { groupId } = req.params;
-    const { id } = req.body;
+    const { userId } = req.body;
 
-    if (!groupId || !id) {
+    if (!userId) {
       return errorResponse(res, 400, "please send groupid and id");
     }
 
-    successResponse(res);
+    const { errorMessage, statusCode, is_error, data } =
+      await removeFromTheGroup(userId, user._id);
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+    successResponse(res, data, errorMessage);
   },
 );
 
