@@ -29,7 +29,7 @@ export async function createGroup(userInput: createGroupType, userId: string) {
     return serviceResult(true, "Groups does not exist", 500);
   }
 
-  return serviceResult(false, "success", 200, groups);
+  return serviceResult(false, "Group created successfully.", 200, groups);
 }
 
 export async function joinGroup(groupId: string, userId: Types.ObjectId) {
@@ -70,7 +70,8 @@ export async function leaveGroup(groupId: string, userId: Types.ObjectId) {
       500,
     );
   }
-  return serviceResult(false, "successfully removed from the group", 200);
+
+  return serviceResult(false, "successfully left the group", 200);
 }
 
 export async function removeFromTheGroup(
@@ -103,6 +104,7 @@ export async function removeFromTheGroup(
       500,
     );
   }
+
   return serviceResult(false, "successfully removed The user the group", 200, {
     username: removedUser.username,
   });
@@ -113,6 +115,11 @@ export async function createMessage(
   groupId: string,
   userId: Types.ObjectId,
 ) {
+  let groups = (await Groups.findById(groupId)) as IGroup;
+  if (!groups) {
+    return serviceResult(true, "Group id is invalid", 404);
+  }
+
   let groupChat = (await GroupChats.create({
     groupId,
     sender: userId,
@@ -128,4 +135,18 @@ export async function createMessage(
   }
 
   return serviceResult(false, "message sent", 200, GroupChats);
+}
+
+export async function groupAdmin(groupId: string, userId: Types.ObjectId) {
+  let groups = await Groups.findById(groupId);
+
+  if (!groups) {
+    return serviceResult(true, "Group id is invalid", 404);
+  }
+
+  if (groups.admin === userId) {
+    return serviceResult(false, "This user is group admin", 200);
+  }
+
+  return serviceResult(true, "You are not Group admin.", 403);
 }

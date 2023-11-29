@@ -13,7 +13,6 @@ import {
   leaveGroup,
   removeFromTheGroup,
 } from "../services/group.services.js";
-import { string } from "zod";
 
 export const createGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
@@ -127,6 +126,7 @@ export const removeMemberController = asyncHandler(
   },
 );
 
+// TODO: write a query to get 20 message
 export const getMessagesController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
