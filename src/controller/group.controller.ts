@@ -23,10 +23,8 @@ export const createGroupController = asyncHandler(
     }
 
     const body = req.body;
-    const { isError, message, verifiedData } = validateInput<createGroupType>(
-      body,
-      groupSchema,
-    );
+    const { isError, message, verifiedData } =
+      await validateInput<createGroupType>(body, groupSchema);
 
     if (isError || !verifiedData) {
       return errorResponse(res, 400, message);
@@ -157,7 +155,7 @@ export const createMessageController = asyncHandler(
     const { groupId } = req.params;
     const body = req.body as { message: string };
 
-    const { message, isError, verifiedData } = validateInput<{
+    const { message, isError, verifiedData } = await validateInput<{
       message: string;
     }>(body, messageSchema);
 

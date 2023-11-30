@@ -38,7 +38,7 @@ app.get("/", (_req, res) => {
 });
 
 // health check route
-app.get("/health", (_req: UserRequest, res) => {
+app.get("/api/v1/health", (_req: UserRequest, res) => {
   res.status(200).json({
     message: "This is the health message",
   });

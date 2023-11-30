@@ -1,21 +1,32 @@
-import { Users } from '../model/user.js';
-import { loginType, registerType } from '../types/user.type.js';
+import { Users } from "../model/user.js";
+import { loginType, registerType } from "../types/user.type.js";
 
 export async function createUser(userInput: registerType) {
-  if (!userInput) {
+  let { is_Error } = await getUser({
+    username: userInput.username,
+    password: userInput.password,
+  });
+
+  const isUserExist = await Users.findOne({ email: userInput.email });
+
+  if (isUserExist) {
+    is_Error = false;
+  }
+
+  if (!is_Error) {
     return {
       is_Error: true,
-      errorMessage: 'user data not found',
-      data: undefined,
-      statusCode: 400,
+      errorMessage: "User already exist. please login.",
+      statusCode: 401,
     };
   }
+
   const user = await Users.create(userInput);
 
   if (!user) {
     return {
       is_Error: true,
-      errorMessage: 'something went wrong',
+      errorMessage: "something went wrong",
       data: undefined,
       statusCode: 500,
     };
@@ -24,29 +35,21 @@ export async function createUser(userInput: registerType) {
   user.password = undefined;
   return {
     is_Error: false,
-    errorMessage: 'success',
+    errorMessage: "success",
     data: user,
     statusCode: 200,
   };
 }
 
 export async function getUser(userInput: loginType) {
-  if (!userInput) {
-    return {
-      is_Error: true,
-      errorMessage: 'user data not found',
-      data: undefined,
-      statusCode: 400,
-    };
-  }
   const user = await Users.findOne({ username: userInput.username }).select(
-    '+password',
+    "+password",
   );
 
   if (!user) {
     return {
       is_Error: true,
-      errorMessage: 'something went wrong',
+      errorMessage: "User does not exist. Please Create a account",
       data: undefined,
       statusCode: 500,
     };
@@ -57,7 +60,7 @@ export async function getUser(userInput: loginType) {
   if (!isValidatePassword) {
     return {
       is_Error: true,
-      errorMessage: 'password and username are not valid',
+      errorMessage: "password and username are not valid",
       data: undefined,
       statusCode: 401,
     };
@@ -66,28 +69,19 @@ export async function getUser(userInput: loginType) {
   user.password = undefined;
   return {
     is_Error: false,
-    errorMessage: 'success',
+    errorMessage: "success",
     data: user,
     statusCode: 200,
   };
 }
 
-export async function getUserById(userId: string | null) {
-  if (!userId) {
-    return {
-      is_Error: true,
-      errorMessage: 'invalid, please login ',
-      data: undefined,
-      statusCode: 404,
-    };
-  }
-
+export async function getUserById(userId: string) {
   const user = await Users.findById(userId);
 
   if (!user) {
     return {
       is_Error: true,
-      errorMessage: 'user not found',
+      errorMessage: "user not found",
       data: undefined,
       statusCode: 404,
     };
@@ -97,7 +91,7 @@ export async function getUserById(userId: string | null) {
 
   return {
     is_Error: false,
-    errorMessage: 'success',
+    errorMessage: "success",
     data: user,
     statusCode: 200,
   };

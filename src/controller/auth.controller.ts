@@ -11,7 +11,7 @@ import redis from "../config/redis.js";
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body as loginType;
 
-  const { isError, message, verifiedData } = validateInput<loginType>(
+  const { isError, message, verifiedData } = await validateInput<loginType>(
     body,
     loginSchema,
   );
@@ -51,14 +51,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body as registerType;
-  console.log(body);
 
-  const { isError, message, verifiedData } = validateInput<registerType>(
+  const { isError, message, verifiedData } = await validateInput<registerType>(
     body,
     registerSchema,
   );
-
-  console.log(verifiedData);
 
   if (isError) {
     return res.status(400).json({

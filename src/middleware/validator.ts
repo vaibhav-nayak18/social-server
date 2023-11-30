@@ -7,11 +7,11 @@ type validateType<T> = {
 };
 
 /** This function validate user input in runtime and ensure all the data is valid */
-export function validateInput<T>(
+export async function validateInput<T>(
   input: T,
   schema: AnyZodObject,
-): validateType<T> {
-  const result = schema.safeParse(input);
+): Promise<validateType<T>> {
+  const result = await schema.safeParseAsync(input);
 
   if (result.success) {
     return {
