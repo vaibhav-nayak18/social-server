@@ -9,6 +9,7 @@ import { errorResponse, successResponse } from "../util/response.js";
 import {
   createGroup,
   createMessage,
+  getAllGroups,
   joinGroup,
   leaveGroup,
   removeFromTheGroup,
@@ -48,7 +49,6 @@ export const createGroupController = asyncHandler(
 export const joinGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
-
     if (!user) {
       return errorResponse(res, 403, "please login");
     }
@@ -66,11 +66,12 @@ export const joinGroupController = asyncHandler(
       user._id,
     );
 
-    if (!is_error) {
+    console.log("here ");
+    if (is_error) {
       return errorResponse(res, statusCode, errorMessage);
     }
 
-    successResponse(res);
+    successResponse(res, {}, errorMessage);
   },
 );
 
@@ -110,12 +111,18 @@ export const removeMemberController = asyncHandler(
     }
     const { userId } = req.body;
 
+    const { groupId } = req.params;
+
+    if (!groupId) {
+      return errorResponse(res, 400, "please send group id in url");
+    }
+
     if (!userId) {
-      return errorResponse(res, 400, "please send groupid and id");
+      return errorResponse(res, 400, "please send user id in body");
     }
 
     const { errorMessage, statusCode, is_error, data } =
-      await removeFromTheGroup(userId, user._id);
+      await removeFromTheGroup(userId, user._id, groupId);
 
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);
@@ -172,6 +179,24 @@ export const createMessageController = asyncHandler(
       groupId,
       user._id,
     );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
+  },
+);
+
+export const getAllGroupsController = asyncHandler(
+  async (req: UserRequest, res: Response) => {
+    const user = req.user as IUser;
+
+    if (!user) {
+      return errorResponse(res, 403, "please login");
+    }
+
+    const { data, is_error, statusCode, errorMessage } = await getAllGroups();
 
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);

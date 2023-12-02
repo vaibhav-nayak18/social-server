@@ -10,6 +10,7 @@ export const authorizationUser = asyncHandler(
     const token =
       req.cookies?.access_token ||
       req.headers["authorization"]?.replace("Bearer ", "");
+    console.log("cookies", req.cookies);
 
     if (!token) {
       return res.status(403).json({

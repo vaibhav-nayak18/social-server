@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { IUser, UserRequest } from "../types/user.type.js";
+import { successResponse } from "../util/response.js";
 
 export const getAllNotification = asyncHandler(
   async (req: UserRequest, res: Response) => {
@@ -43,6 +44,21 @@ export const updateProfile = asyncHandler(
         message: "please send another user id",
       });
     }
+  },
+);
+
+export const getProfile = asyncHandler(
+  async (req: UserRequest, res: Response) => {
+    const user = req.user as IUser;
+
+    if (!user) {
+      return res.status(403).json({
+        isError: true,
+        message: "please login",
+      });
+    }
+
+    successResponse(res, user);
   },
 );
 

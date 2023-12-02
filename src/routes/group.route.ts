@@ -7,18 +7,20 @@ import {
   joinGroupController,
   leaveGroupController,
   removeMemberController,
+  getAllGroupsController,
 } from "../controller/group.controller.js";
 
 export const groupRoute = express.Router();
 
 // only authenticated users can access
+groupRoute.get("/", getAllGroupsController);
 groupRoute.post("/create", createGroupController);
-groupRoute.post("/join", joinGroupController);
+groupRoute.put("/join/:groupId", joinGroupController);
 
 // Only accessible to group admin
-groupRoute.post("/remove", removeMemberController);
+groupRoute.delete("/remove/:groupId", removeMemberController);
 
 // only group members can access
-groupRoute.post("/leave", leaveGroupController);
+groupRoute.post("/leave/:groupId", leaveGroupController);
 groupRoute.put("/chats/create", createMessageController);
 groupRoute.get("/chats/:id", getMessagesController);

@@ -1,8 +1,8 @@
-import { Types } from "mongoose";
+import { Types, ObjectId } from "mongoose";
 
 import { Groups } from "../model/group.js";
 import { IGroup, createGroupType } from "../types/group.type.js";
-import { serviceResult } from "../util/response.js";
+import { errorResponse, serviceResult } from "../util/response.js";
 import { Users } from "../model/user.js";
 import { IUser } from "../types/user.type.js";
 import { GroupChats } from "../model/groupChat.js";
@@ -34,9 +34,23 @@ export async function createGroup(userInput: createGroupType, userId: string) {
 
 export async function joinGroup(groupId: string, userId: Types.ObjectId) {
   let groups = (await Groups.findById(groupId)) as IGroup;
-
   if (!groups) {
     return serviceResult(true, "groups is not present", 404);
+  }
+
+  let isExist = false;
+  if (groups.admin.equals(userId)) {
+    isExist = true;
+  }
+
+  groups.users.forEach((val) => {
+    if (val.equals(userId)) {
+      isExist = true;
+    }
+  });
+
+  if (isExist) {
+    return serviceResult(true, "User already exist in the group", 401);
   }
   groups.users.push(userId);
   groups = await groups.save();
@@ -75,26 +89,35 @@ export async function leaveGroup(groupId: string, userId: Types.ObjectId) {
 }
 
 export async function removeFromTheGroup(
-  userId: string,
-  adminId: Types.ObjectId,
+  removeId: string,
+  userId: Types.ObjectId,
+  groupId: string,
 ) {
-  let groups = (await Groups.findOne({ admin: adminId })) as IGroup;
+  let groups = (await Groups.findById(groupId)) as IGroup;
 
   if (!groups) {
     return serviceResult(true, "Admin can only kickout groups memebers", 404);
   }
 
+  if (!groups.admin.equals(userId)) {
+    return serviceResult(true, "Admin can only kickout groups memebers", 404);
+  }
+
   let removedUserId;
 
+  let id = new Types.ObjectId(removeId);
   groups.users = groups.users.filter((val) => {
-    if (val.toString() === userId) {
+    if (val.equals(id)) {
       removedUserId = val;
     }
-    return val.toString() !== userId;
+    return !val.equals(id);
   });
 
   let removedUser = (await Users.findById(removedUserId)) as IUser;
 
+  if (!removedUser) {
+    return serviceResult(true, "user does not exit in this group", 404);
+  }
   groups = await groups.save();
 
   if (!groups) {
@@ -105,9 +128,12 @@ export async function removeFromTheGroup(
     );
   }
 
-  return serviceResult(false, "successfully removed The user the group", 200, {
-    username: removedUser.username,
-  });
+  return serviceResult(
+    false,
+    "successfully removed The user the group",
+    200,
+    groups,
+  );
 }
 
 export async function createMessage(
@@ -141,7 +167,7 @@ export async function groupAdmin(groupId: string, userId: Types.ObjectId) {
   let groups = await Groups.findById(groupId);
 
   if (!groups) {
-    return serviceResult(true, "Group id is invalid", 404);
+    return serviceResult(true, "group id is invalid", 404);
   }
 
   if (groups.admin === userId) {
@@ -149,4 +175,14 @@ export async function groupAdmin(groupId: string, userId: Types.ObjectId) {
   }
 
   return serviceResult(true, "You are not Group admin.", 403);
+}
+
+export async function getAllGroups() {
+  let groups = await Groups.find({});
+
+  if (!groups) {
+    return serviceResult(true, "something went wrong", 500);
+  }
+
+  return serviceResult(false, "success", 200, groups);
 }
