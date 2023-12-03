@@ -21,6 +21,6 @@ groupRoute.put("/join/:groupId", joinGroupController);
 groupRoute.delete("/remove/:groupId", removeMemberController);
 
 // only group members can access
-groupRoute.post("/leave/:groupId", leaveGroupController);
-groupRoute.put("/chats/create", createMessageController);
-groupRoute.get("/chats/:id", getMessagesController);
+groupRoute.delete("/leave/:groupId", leaveGroupController);
+groupRoute.put("/chats/create/:groupId", createMessageController);
+groupRoute.get("/chats/:groupId", getMessagesController);

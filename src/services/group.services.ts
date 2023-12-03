@@ -186,3 +186,20 @@ export async function getAllGroups() {
 
   return serviceResult(false, "success", 200, groups);
 }
+
+export async function getChats(
+  groupId: string,
+  messagePerPage: number,
+  skipCount: number,
+) {
+  const groupChats = (await GroupChats.find({ groupId })
+    .sort({ createAt: -1 })
+    .limit(messagePerPage)
+    .skip(skipCount)) as IGroupChat[];
+
+  if (!groupChats) {
+    return serviceResult(true, "Group is not present", 404);
+  }
+
+  return serviceResult(false, "success", 200, groupChats);
+}

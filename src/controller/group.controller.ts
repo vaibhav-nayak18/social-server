@@ -10,6 +10,7 @@ import {
   createGroup,
   createMessage,
   getAllGroups,
+  getChats,
   joinGroup,
   leaveGroup,
   removeFromTheGroup,
@@ -23,7 +24,7 @@ export const createGroupController = asyncHandler(
       return errorResponse(res, 403, "please login");
     }
 
-    const body = req.body;
+    const body = req.body as createGroupType;
     const { isError, message, verifiedData } =
       await validateInput<createGroupType>(body, groupSchema);
 
@@ -57,8 +58,8 @@ export const joinGroupController = asyncHandler(
       groupId: string;
     };
 
-    if (!groupId) {
-      return errorResponse(res, 400, "please send group id in url");
+    if (!groupId || groupId.length != 24) {
+      return errorResponse(res, 400, "please send groupid and id");
     }
 
     const { is_error, statusCode, errorMessage } = await joinGroup(
@@ -85,8 +86,8 @@ export const leaveGroupController = asyncHandler(
 
     const { groupId } = req.params;
 
-    if (!groupId) {
-      return errorResponse(res, 400, "please send group id in url");
+    if (!groupId || groupId.length != 24) {
+      return errorResponse(res, 400, "please send groupid and id");
     }
 
     const { data, is_error, statusCode, errorMessage } = await leaveGroup(
@@ -113,11 +114,11 @@ export const removeMemberController = asyncHandler(
 
     const { groupId } = req.params;
 
-    if (!groupId) {
-      return errorResponse(res, 400, "please send group id in url");
+    if (!groupId || groupId.length != 24) {
+      return errorResponse(res, 400, "please send groupid and id");
     }
 
-    if (!userId) {
+    if (!userId || userId.length != 24) {
       return errorResponse(res, 400, "please send user id in body");
     }
 
@@ -132,7 +133,6 @@ export const removeMemberController = asyncHandler(
   },
 );
 
-// TODO: write a query to get 20 message
 export const getMessagesController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
@@ -143,11 +143,29 @@ export const getMessagesController = asyncHandler(
 
     const { groupId } = req.params;
 
-    if (!groupId) {
+    const page = req.query.page as string;
+    let pageNum = parseInt(page);
+
+    if (!pageNum) {
+      pageNum = 1;
+    }
+
+    if (!groupId || groupId.length != 24) {
       return errorResponse(res, 400, "please send groupid and id");
     }
 
-    successResponse(res);
+    const messagePerPage = 25;
+    const skipCount = (pageNum - 1) * messagePerPage;
+    const { data, is_error, statusCode, errorMessage } = await getChats(
+      groupId,
+      messagePerPage,
+      skipCount,
+    );
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data);
   },
 );
 
@@ -170,12 +188,12 @@ export const createMessageController = asyncHandler(
       return errorResponse(res, 403, message);
     }
 
-    if (!groupId) {
+    if (!groupId || groupId.length != 24) {
       return errorResponse(res, 400, "please send groupid and id");
     }
 
     const { data, is_error, statusCode, errorMessage } = await createMessage(
-      message,
+      verifiedData.message,
       groupId,
       user._id,
     );
