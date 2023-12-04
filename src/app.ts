@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import swagger from "swagger-ui-express";
 
 import { createServer } from "http";
 import cookieParser from "cookie-parser";
@@ -12,6 +13,7 @@ import {
   groupRoute,
   personalRoute,
 } from "./routes/index.js";
+import { swaggerDocument } from "./config/swagger.js";
 
 export const app = express();
 export const server = createServer(app);
@@ -36,6 +38,8 @@ app.get("/", (_req, res) => {
     message: "hello world!",
   });
 });
+
+app.use("/api/docs/", swagger.serve, swagger.setup(swaggerDocument, {}));
 
 // health check route
 app.get("/api/v1/health", (_req: UserRequest, res) => {
