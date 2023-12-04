@@ -9,6 +9,7 @@ import { errorResponse, successResponse } from "../util/response.js";
 import {
   createGroup,
   createMessage,
+  deleteGroup,
   getAllGroups,
   getChats,
   joinGroup,
@@ -215,6 +216,32 @@ export const getAllGroupsController = asyncHandler(
     }
 
     const { data, is_error, statusCode, errorMessage } = await getAllGroups();
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
+  },
+);
+
+export const deleteGroupsController = asyncHandler(
+  async (req: UserRequest, res: Response) => {
+    const user = req.user as IUser;
+
+    if (!user) {
+      return errorResponse(res, 403, "please login");
+    }
+
+    const { groupId } = req.params;
+    if (!groupId || groupId.length != 24) {
+      return errorResponse(res, 403, "Group is not present");
+    }
+
+    const { data, is_error, statusCode, errorMessage } = await deleteGroup(
+      groupId,
+      user._id,
+    );
 
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);

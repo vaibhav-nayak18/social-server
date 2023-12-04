@@ -203,3 +203,34 @@ export async function getChats(
 
   return serviceResult(false, "success", 200, groupChats);
 }
+
+export async function deleteGroup(groupId: string, adminId: Types.ObjectId) {
+  let group = (await Groups.findById(groupId)) as IGroup;
+
+  let isAdmin = false;
+
+  if (!group) {
+    return serviceResult(true, "Please try agian later", 500);
+  }
+
+  if (group.admin.equals(adminId)) {
+    isAdmin = true;
+  }
+
+  if (!isAdmin) {
+    return serviceResult(true, "Only admin has this privillage", 401);
+  }
+
+  group = await group.deleteOne();
+
+  if (!group) {
+    return serviceResult(true, "Please try agian later", 500);
+  }
+
+  return serviceResult(
+    false,
+    `successfully deleted ${group.name} `,
+    200,
+    group,
+  );
+}

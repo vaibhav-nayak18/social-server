@@ -8,6 +8,7 @@ import {
   leaveGroupController,
   removeMemberController,
   getAllGroupsController,
+  deleteGroupsController,
 } from "../controller/group.controller.js";
 
 export const groupRoute = express.Router();
@@ -19,6 +20,7 @@ groupRoute.put("/join/:groupId", joinGroupController);
 
 // Only accessible to group admin
 groupRoute.delete("/remove/:groupId", removeMemberController);
+groupRoute.delete("/delete/:groupId", deleteGroupsController);
 
 // only group members can access
 groupRoute.delete("/leave/:groupId", leaveGroupController);
