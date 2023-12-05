@@ -16,4 +16,5 @@ personalRoute.delete("/decline", declineFriendRequest);
 
 // should be friend
 personalRoute.delete("/remove", removeFriend);
-personalRoute.get("/chats", getPersonalMessage);
+personalRoute.get("/chat/:id", getPersonalMessage);
+personalRoute.put("/chat/:id");
