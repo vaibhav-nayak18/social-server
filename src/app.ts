@@ -14,6 +14,7 @@ import {
   personalRoute,
 } from "./routes/index.js";
 import { swaggerDocument } from "./config/swagger.js";
+import { authenticateUser } from "./controller/auth.controller.js";
 
 export const app = express();
 export const server = createServer(app);
@@ -42,23 +43,20 @@ app.get("/", (_req, res) => {
 app.use("/api/docs/", swagger.serve, swagger.setup(swaggerDocument, {}));
 
 // health check route
-app.get("/api/v1/health", (_req: UserRequest, res) => {
+app.get("/health", (_req: UserRequest, res) => {
   res.status(200).json({
-    message: "This is the health message",
+    message: "Hello, God!",
   });
 });
 
 // auth routes
 app.use("/api/v1/auth", authRoute);
 
-// authorizing users middleware
-app.use(authorizationUser);
-
 // user routes
-app.use("/api/v1/user", userRoute);
+app.use("/api/v1/user", authenticateUser, userRoute);
 
 // personal routes
-app.use("/api/v1/notification", personalRoute);
+app.use("/api/v1/notification", authenticateUser, personalRoute);
 
 //group routes
-app.use("/api/v1/group", groupRoute);
+app.use("/api/v1/group", authenticateUser, groupRoute);

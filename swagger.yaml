@@ -1,5 +1,196 @@
 openapi: 3.0.0
+
+servers:
+  - url: "http://localhost:5000/api/v1"
+  - url: "http://localhost:5000"
+
 info:
-  title: Sample API
-  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
-  version: 0.1.9
+  title: Social App
+  version: 1.0.0
+  description: Chat App
+
+tags:
+  - name: Authentication
+    description: Endpoints related to user authentication
+
+  - name: Groups
+    description: Endpoints related to group management
+
+paths:
+  /health:
+    get:
+      summary: Get Hello Message
+      description: Returns a greeting message.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: Hello, God!
+
+  /auth/login:
+    post:
+      summary: User Login
+      description: Endpoint for user authentication.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              example:
+                message: Login successful
+                isError: false
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Incorrect username or password
+
+  /auth/register:
+    post:
+      summary: User Registration
+      description: Endpoint for user registration.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              example:
+                message: Registration successful
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              example:
+                message: Invalid request data
+
+  /auth/authenticate:
+    get:
+      summary: Authenticate User
+      description: Endpoint to check if the user is authenticated.
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User is authenticated
+          content:
+            application/json:
+              example:
+                message: User is authenticated
+                isError: false
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: User is not authenticated
+                isError: true
+  /group:
+    get:
+      summary: Get All Groups
+      description: Retrieve a list of all groups.
+      tags:
+        - Groups
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              example:
+                groups:
+                  - groupId: 1
+                    groupName: "Group 1"
+                  - groupId: 2
+                    groupName: "Group 2"
+    post:
+      summary: Create Group
+      description: Create a new group.
+      tags:
+        - Groups
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupName:
+                  type: string
+      responses:
+        "201":
+          description: Group created successfully
+          content:
+            application/json:
+              example:
+                message: Group created successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              example:
+                message: Invalid request data
+
+    put:
+      summary: Join Group
+      description: Join an existing group.
+      tags:
+        - Groups
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          description: ID of the group to join
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Joined group successfully
+          content:
+            application/json:
+              example:
+                message: Joined group successfully
+        "404":
+          description: Group not found
+          content:
+            application/json:
+              example:
+                message: Group not found

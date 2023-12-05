@@ -40,7 +40,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   await cookieToken(user, res);
 
   return res.status(statusCode).json({
-    message: errorMessage,
+    message: "Login successful",
     isError: is_Error,
     data: {
       username: user.username,
@@ -81,7 +81,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   await cookieToken(user, res);
 
   return res.status(statusCode).json({
-    message: errorMessage,
+    message: "Account created successful",
     isError: is_Error,
     data: {
       username: user.username,
@@ -117,7 +117,7 @@ export const authenticateUser = asyncHandler(
     if (cacheUser) {
       const user = JSON.parse(cacheUser);
       return res.status(200).json({
-        message: "success",
+        message: "User is authenticated",
         isError: false,
         data: {
           username: user.username,
@@ -145,7 +145,7 @@ export const authenticateUser = asyncHandler(
     await redis.set(`user:${payload.id}`, userString);
 
     return res.status(statusCode).json({
-      message: errorMessage,
+      message: "User is authenticated",
       isError: is_Error,
       data: {
         username: user.username,
