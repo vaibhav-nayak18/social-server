@@ -47,21 +47,6 @@ export const updateProfile = asyncHandler(
   },
 );
 
-export const getProfile = asyncHandler(
-  async (req: UserRequest, res: Response) => {
-    const user = req.user as IUser;
-
-    if (!user) {
-      return res.status(403).json({
-        isError: true,
-        message: "please login",
-      });
-    }
-
-    successResponse(res, user);
-  },
-);
-
 export const deleteUser = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
@@ -70,15 +55,6 @@ export const deleteUser = asyncHandler(
       return res.status(403).json({
         isError: true,
         message: "please login",
-      });
-    }
-
-    const { friendId } = req.body;
-
-    if (!friendId) {
-      return res.status(400).json({
-        isError: true,
-        message: "please send another user id",
       });
     }
   },

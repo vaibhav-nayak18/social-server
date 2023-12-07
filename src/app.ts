@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import swagger from "swagger-ui-express";
+import path from "path";
+const __dirname = path.resolve();
 
 import { createServer } from "http";
 import cookieParser from "cookie-parser";
@@ -14,7 +16,6 @@ import {
   personalRoute,
 } from "./routes/index.js";
 import { swaggerDocument } from "./config/swagger.js";
-import { authenticateUser } from "./controller/auth.controller.js";
 
 export const app = express();
 export const server = createServer(app);
@@ -35,9 +36,10 @@ app.use(cookieParser());
 
 //  test routes
 app.get("/", (_req, res) => {
-  res.status(200).json({
-    message: "hello world!",
-  });
+  res.sendFile(__dirname + "/index.html");
+  // res.status(200).json({
+  //   message: "hello world!",
+  // });
 });
 
 app.use("/api/docs/", swagger.serve, swagger.setup(swaggerDocument, {}));
@@ -53,10 +55,10 @@ app.get("/health", (_req: UserRequest, res) => {
 app.use("/api/v1/auth", authRoute);
 
 // user routes
-app.use("/api/v1/user", authenticateUser, userRoute);
+app.use("/api/v1/user", authorizationUser, userRoute);
 
 // personal routes
-app.use("/api/v1/notification", authenticateUser, personalRoute);
+app.use("/api/v1/notification", authorizationUser, personalRoute);
 
 //group routes
-app.use("/api/v1/group", authenticateUser, groupRoute);
+app.use("/api/v1/group", authorizationUser, groupRoute);

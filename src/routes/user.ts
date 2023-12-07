@@ -1,17 +1,16 @@
 import express from "express";
-import {
-  deleteUser,
-  getAllNotification,
-  getProfile,
-  updateProfile,
-} from "../controller/user.controller.js";
+import // deleteUser,
+// getAllNotification,
+// updateProfile,
+"../controller/user.controller.js";
+import { authenticateUser } from "../controller/auth.controller.js";
 
 export const userRoute = express.Router();
 
 // should be users
-userRoute.get("/notification", getAllNotification);
-userRoute.put("/update", updateProfile);
-userRoute.get("/profile", getProfile);
+userRoute.get("/profile", authenticateUser);
 
 // still need work
-userRoute.delete("/delete", deleteUser);
+// userRoute.delete("/delete", deleteUser);
+// userRoute.get("/notification", getAllNotification);
+// userRoute.put("/update", updateProfile);

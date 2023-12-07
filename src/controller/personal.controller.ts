@@ -14,14 +14,15 @@ export const sendFriendRequest = asyncHandler(
       });
     }
 
-    const { friendId } = req.body;
+    const { friendId } = req.body as { friendId: string };
 
-    if (!friendId) {
+    if (!friendId && friendId.length != 24) {
       return res.status(400).json({
         isError: true,
-        message: "please send another user id",
+        message: "please send user id",
       });
     }
+
     successResponse(res);
   },
 );
