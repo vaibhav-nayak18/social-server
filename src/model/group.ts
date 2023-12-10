@@ -22,4 +22,4 @@ const groupSchema = new Schema<IGroup>({
   ],
 });
 
-export const Groups = model<IGroup>("Group", groupSchema);
+export const Groups = model<IGroup>("Groups", groupSchema);

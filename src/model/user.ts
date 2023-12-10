@@ -29,6 +29,12 @@ const userSchema = new Schema<IUser>({
       ref: "Notifications",
     },
   ],
+  groups: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Groups",
+    },
+  ],
 });
 
 userSchema.pre(

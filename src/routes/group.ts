@@ -2,7 +2,6 @@ import express from "express";
 
 import {
   createGroupController,
-  createMessageController,
   getMessagesController,
   joinGroupController,
   leaveGroupController,
@@ -24,5 +23,4 @@ groupRoute.delete("/delete/:groupId", deleteGroupsController);
 
 // only group members can access
 groupRoute.delete("/leave/:groupId", leaveGroupController);
-groupRoute.put("/chats/create/:groupId", createMessageController);
 groupRoute.get("/chats/:groupId", getMessagesController);

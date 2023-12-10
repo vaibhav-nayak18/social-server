@@ -25,4 +25,4 @@ const groupChatSchema = new Schema<IGroupChat>({
   },
 });
 
-export const GroupChats = model<IGroupChat>("GroupChat", groupChatSchema);
+export const GroupChats = model<IGroupChat>("GroupChats", groupChatSchema);

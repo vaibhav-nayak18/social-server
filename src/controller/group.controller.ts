@@ -170,43 +170,6 @@ export const getMessagesController = asyncHandler(
   },
 );
 
-export const createMessageController = asyncHandler(
-  async (req: UserRequest, res: Response) => {
-    const user = req.user as IUser;
-
-    if (!user) {
-      return errorResponse(res, 403, "please login");
-    }
-
-    const { groupId } = req.params;
-    const body = req.body as { message: string };
-
-    const { message, isError, verifiedData } = await validateInput<{
-      message: string;
-    }>(body, messageSchema);
-
-    if (isError || !verifiedData) {
-      return errorResponse(res, 403, message);
-    }
-
-    if (!groupId || groupId.length != 24) {
-      return errorResponse(res, 400, "please send groupid and id");
-    }
-
-    const { data, is_error, statusCode, errorMessage } = await createMessage(
-      verifiedData.message,
-      groupId,
-      user._id,
-    );
-
-    if (is_error || !data) {
-      return errorResponse(res, statusCode, errorMessage);
-    }
-
-    successResponse(res, data, errorMessage);
-  },
-);
-
 export const getAllGroupsController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;

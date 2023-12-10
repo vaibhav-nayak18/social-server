@@ -4,11 +4,13 @@ import { Request } from "express";
 
 import { loginSchema, registerSchema } from "../validators/user.schema.js";
 import { INotification } from "./notification.type.js";
+import { IGroup } from "./group.type.js";
 export interface IUser extends Document {
   username: string;
   password?: string;
   email: string;
   notifications: INotification[];
+  groups: IGroup[];
   validatePassword: (userInput: string) => Promise<boolean>;
   getAccessToken: () => Promise<string>;
 }
