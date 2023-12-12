@@ -5,6 +5,8 @@ services:
     restart: always
     ports:
       - "2717:27017"
+    volumes:
+      - mongoDB:/data/db
 
   redis_cache:
     image: redis:latest
@@ -18,12 +20,14 @@ services:
       - 5000:5000
     environment:
       PORT: 5000
-      MONGODB_URL: mongodb://mongo_db:27017/social
+      MONGODB_URL: mongodb://mongo_db:27017
       REDIS: redis://redis_cache:6379
-      # ACCESS_TOKEN: C56DDF28E430BEB4CBB046235E67C604DB988124BA16CBEA8C6635CE547994F0
-      # ACCESS_TOKEN_EXP: 1d
-      # REDIS: redis://redis-18876.c301.ap-south-1-1.ec2.cloud.redislabs.com:18876
-      # PASSWORD: wKdI9SPy0tzZNN2Z0Sox7mPYbygHLYkG
     depends_on:
       - mongo_db
-      # - redis_cache
+      - redis_cache
+    command: pnpm dev
+    volumes:
+      - .:/usr/src/app
+
+volumes:
+  mongoDB: {}
