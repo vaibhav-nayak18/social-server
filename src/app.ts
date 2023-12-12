@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import swagger from "swagger-ui-express";
 import path from "path";
+import { hostname } from "os";
 const __dirname = path.resolve();
 
 import { createServer } from "http";
@@ -45,9 +46,10 @@ app.get("/", (_req, res) => {
 app.use("/api/docs/", swagger.serve, swagger.setup(swaggerDocument, {}));
 
 // health check route
-app.get("/health", (_req: UserRequest, res) => {
+app.get("/api/v1/health", (_req: UserRequest, res) => {
   res.status(200).json({
     message: "Hello, God!",
+    hostname: hostname(),
   });
 });
 
