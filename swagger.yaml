@@ -2,7 +2,7 @@ openapi: 3.0.0
 
 servers:
   - url: "http://localhost:5000/api/v1"
-  - url: "https://social-dc1i.onrender.com"
+  - url: "https://social-dc1i.onrender.com/api/v1"
 
 info:
   title: Social App
