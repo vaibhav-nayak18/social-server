@@ -1,12 +1,20 @@
-import { createClient } from "redis";
-import { REDIS } from "./env.js";
+import { RedisClientType, createClient } from "redis";
+import { REDIS, PASSWORD, ENV } from "./env.js";
 import { log } from "console";
 
-log("redis hello:", REDIS);
-const client = createClient({
-  url: REDIS,
-  // password: PASSWORD,
-});
+let redis: RedisClientType | undefined;
+if (ENV === "render") {
+  redis = createClient({
+    url: REDIS,
+    password: PASSWORD,
+  });
+} else {
+  redis = createClient({
+    url: REDIS,
+  });
+}
+
+const client = redis;
 
 try {
   client.on("error", (err) => console.log("Redis Error: ", err));

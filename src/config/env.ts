@@ -8,3 +8,4 @@ export const ACCESS_TOKEN_EXP = process.env.ACCESS_TOKEN_EXP as string;
 export const ORIGIN = process.env.ORIGIN as string;
 export const REDIS = process.env.REDIS as string;
 export const PASSWORD = process.env.PASSWORD as string;
+export const ENV = process.env.ENV as string;
