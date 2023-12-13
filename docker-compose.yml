@@ -1,7 +1,7 @@
 services:
   # Mongodb
   mongo_db:
-    image: mongo:latest
+    image: mongo:7.0
     restart: always
     ports:
       - "2717:27017"
@@ -9,7 +9,7 @@ services:
       - mongoDB:/data/db
 
   redis_cache:
-    image: redis:latest
+    image: redis:7.2
     restart: always
     ports:
       - "6379:6379"
