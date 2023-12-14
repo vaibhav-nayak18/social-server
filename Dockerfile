@@ -6,7 +6,5 @@ COPY package*.json .
 RUN npm install -g pnpm
 RUN pnpm i
 
-
 COPY . /usr/src/app
 
-CMD ["pnpm", "dev"]

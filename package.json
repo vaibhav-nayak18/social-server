@@ -9,7 +9,8 @@
     "dev": "nodemon",
     "start": "tsc && node dist/index.js",
     "build": "pnpm i && tsc",
-    "dx": "docker compose up --build"
+    "dx": "docker compose up --build",
+    "prod": "NODE_ENV=production docker compose up --build"
   },
   "author": "",
   "license": "ISC",
