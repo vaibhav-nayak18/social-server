@@ -16,6 +16,7 @@ import {
   leaveGroup,
   removeFromTheGroup,
 } from "../services/group.services.js";
+import { sendMessage } from "./personal.controller.js";
 
 export const createGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
@@ -202,6 +203,46 @@ export const deleteGroupsController = asyncHandler(
     }
 
     const { data, is_error, statusCode, errorMessage } = await deleteGroup(
+      groupId,
+      user._id,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
+  },
+);
+
+export const sendGroupMessage = asyncHandler(
+  async (req: UserRequest, res: Response) => {
+    const user = req.user as IUser;
+
+    if (!user) {
+      return errorResponse(res, 403, "please login");
+    }
+
+    const { groupId } = req.params;
+    if (!groupId || groupId.length != 24) {
+      return errorResponse(res, 403, "Group is not present");
+    }
+
+    const body = req.body;
+
+    const { message, isError, verifiedData } = await validateInput<{
+      chatMessage: string;
+    }>(body, messageSchema);
+
+    if (isError || !verifiedData) {
+      return res.status(400).json({
+        message,
+        isError,
+      });
+    }
+
+    const { data, is_error, statusCode, errorMessage } = await createMessage(
+      verifiedData.chatMessage,
       groupId,
       user._id,
     );
