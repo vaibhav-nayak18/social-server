@@ -80,12 +80,21 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   await cookieToken(user, res);
 
+  const userString = JSON.stringify({
+    username: user.username,
+    email: user.email,
+    id: user._id,
+  });
+
+  await redis.set(`user:${user._id}`, userString);
+
   return res.status(statusCode).json({
     message: "Account created successful",
     isError: is_Error,
     data: {
       username: user.username,
       id: user._id,
+      email: user.email,
     },
   });
 });
@@ -115,13 +124,18 @@ export const authenticateUser = asyncHandler(
     const cacheUser = await redis.get(`user:${payload.id}`);
 
     if (cacheUser) {
-      const user = JSON.parse(cacheUser);
+      const user = JSON.parse(cacheUser) as {
+        _id: string;
+        username: string;
+        email: string;
+      };
       return res.status(200).json({
         message: "User is authenticated",
         isError: false,
         data: {
           username: user.username,
           id: user._id,
+          email: user.email,
         },
       });
     }
@@ -140,7 +154,11 @@ export const authenticateUser = asyncHandler(
       });
     }
 
-    const userString = JSON.stringify(user);
+    const userString = JSON.stringify({
+      username: user.username,
+      email: user.email,
+      id: user._id,
+    });
 
     await redis.set(`user:${payload.id}`, userString);
 
@@ -149,6 +167,7 @@ export const authenticateUser = asyncHandler(
       isError: is_Error,
       data: {
         username: user.username,
+        email: user.email,
         id: user._id,
       },
     });

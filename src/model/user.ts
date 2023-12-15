@@ -23,6 +23,13 @@ const userSchema = new Schema<IUser>({
     required: true,
   },
 
+  friends: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Users",
+    },
+  ],
+
   notifications: [
     {
       type: Schema.Types.ObjectId,

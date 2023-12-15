@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Date } from "mongoose";
 import { IPersonalChat } from "../types/chat.type.js";
 
 const personalChatSchema = new Schema<IPersonalChat>({

@@ -8,44 +8,72 @@ export const io = new Server(server, {});
 const socketServer = new SocketServer();
 
 io.on("connection", (socket) => {
-  socket.on("chat message", (data: { msg: string }) => {
-    console.log("message: " + data.msg);
-    socket.emit("chat message", data.msg);
+  socket.on("chat message", async (data: { msg: string }) => {
+    try {
+      console.log("message: " + data.msg);
+      socket.emit("chat message", data.msg);
+    } catch (error) {
+      log("error", error);
+    }
   });
 
   socket.on("connect", (data: { userId: string }) => {
-    socketServer.setUser(socket.id, data.userId);
+    try {
+      socketServer.setUser(socket.id, data.userId);
+    } catch (error) {
+      log("error", error);
+    }
   });
 
   socket.on("disconnect", () => {
-    socketServer.removeUser(socket.id);
+    try {
+      socketServer.removeUser(socket.id);
+    } catch (error) {
+      log("error", error);
+    }
   });
 
   socket.on(
     "personal message",
     (data: { senderId: string; receiverId: string; msg: string }) => {
-      log("data", data);
+      try {
+        log("data", data);
+      } catch (error) {
+        log("error", error);
+      }
     },
   );
 
   socket.on(
     "group message",
     (data: { senderId: string; groupId: string; msg: string }) => {
-      log("data", data);
+      try {
+        log("data", data);
+      } catch (error) {
+        log("error", error);
+      }
     },
   );
 
   socket.on(
     "send friend request",
     (data: { senderId: string; receiverId: string }) => {
-      log("data", data);
+      try {
+        log("data", data);
+      } catch (error) {
+        log("error", error);
+      }
     },
   );
 
   socket.on(
     "friend request",
     (data: { requestId: string; userId: string; isAccept: boolean }) => {
-      log("data", data);
+      try {
+        log("data", data);
+      } catch (error) {
+        log("error", error);
+      }
     },
   );
 });

@@ -10,3 +10,9 @@ export const personalRoute = express.Router();
 personalRoute.delete("/remove", removeFriend);
 personalRoute.get("/chat/:id", getPersonalMessage);
 personalRoute.put("/chat/:id");
+
+// create friend request
+// accept friend request
+// decline friend request
+
+//
