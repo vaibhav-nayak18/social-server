@@ -2,7 +2,9 @@ import express from "express";
 import {
   getPersonalMessage,
   removeFriend,
+  sendFriendRequest,
 } from "../controller/personal.controller.js";
+import { isFriend } from "../middleware/isFriend.js";
 
 export const personalRoute = express.Router();
 

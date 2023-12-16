@@ -14,6 +14,11 @@ const personalChatSchema = new Schema<IPersonalChat>({
     required: true,
   },
 
+  message: {
+    type: String,
+    required: true,
+  },
+
   createAt: {
     type: Date,
     default: Date.now(),
