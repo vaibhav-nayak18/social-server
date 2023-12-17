@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { Users } from "../model/user.js";
-import { errorResponse, serviceResult } from "../util/response.js";
+import { serviceResult } from "../util/response.js";
 import { Notifications } from "../model/notification.js";
 import { PersonalChats } from "../model/personalChat.js";
 import { IPersonalChat } from "../types/chat.type.js";

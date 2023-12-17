@@ -1,20 +1,25 @@
 import express from "express";
-import {
-  getPersonalMessage,
-  removeFriend,
-  sendFriendRequest,
-} from "../controller/personal.controller.js";
 import { isFriend } from "../middleware/isFriend.js";
+import {
+  acceptFriendRequestController,
+  declineFriendRequestController,
+  sendFriendRequestController,
+  sendMessage,
+  getPersonalMessage,
+  removeFriendController,
+  getAllFriendsController,
+} from "../controller/personal.controller.js";
 
 export const personalRoute = express.Router();
 
-// should be friend
-personalRoute.delete("/remove", removeFriend);
-personalRoute.get("/chat/:id", getPersonalMessage);
-personalRoute.put("/chat/:id");
+personalRoute.post("/create", sendFriendRequestController);
+personalRoute.post("/accept/:requestId", acceptFriendRequestController);
 
-// create friend request
-// accept friend request
-// decline friend request
-
-//
+personalRoute.delete(
+  "/decline/:requestId",
+  isFriend,
+  declineFriendRequestController,
+);
+personalRoute.put("/chat/:friendId", isFriend, sendMessage);
+personalRoute.get("/chat/:friendId", isFriend, getPersonalMessage);
+personalRoute.delete("/remove/:friendId", isFriend, removeFriendController);

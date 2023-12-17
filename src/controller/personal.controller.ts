@@ -1,9 +1,18 @@
 import { Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { IUser, UserRequest } from "../types/user.type.js";
-import { successResponse } from "../util/response.js";
+import { errorResponse, successResponse } from "../util/response.js";
+import {
+  acceptFriendRequest,
+  createFriendRequest,
+  createPersonalChat,
+  declineFriendRequest,
+  getAllFriends,
+  getMessage,
+  removeFriend,
+} from "../services/personal.services.js";
 
-export const sendFriendRequest = asyncHandler(
+export const sendFriendRequestController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -23,11 +32,18 @@ export const sendFriendRequest = asyncHandler(
       });
     }
 
-    successResponse(res);
+    const { errorMessage, statusCode, is_error, data } =
+      await createFriendRequest(user._id, friendId);
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );
 
-export const removeFriend = asyncHandler(
+export const removeFriendController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -37,19 +53,29 @@ export const removeFriend = asyncHandler(
         message: "please login",
       });
     }
-    const { friendId } = req.body;
 
-    if (!friendId) {
+    const { friendId } = req.params as { friendId: string };
+
+    if (!friendId || friendId.length != 24) {
       return res.status(400).json({
         isError: true,
         message: "please send another user id",
       });
     }
-    successResponse(res);
+
+    const { errorMessage, statusCode, is_error, data } = await removeFriend(
+      user._id,
+      friendId,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+    successResponse(res, data, errorMessage);
   },
 );
 
-export const acceptFriendRequest = asyncHandler(
+export const acceptFriendRequestController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -60,19 +86,27 @@ export const acceptFriendRequest = asyncHandler(
       });
     }
 
-    const { requestId } = req.body;
+    const { requestId } = req.params as { requestId: string };
 
-    if (!requestId) {
+    if (!requestId || requestId.length != 24) {
       return res.status(400).json({
         isError: true,
         message: "please send request id",
       });
     }
-    successResponse(res);
+
+    const { errorMessage, statusCode, is_error, data } =
+      await acceptFriendRequest(requestId, user._id);
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );
 
-export const declineFriendRequest = asyncHandler(
+export const declineFriendRequestController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -83,15 +117,23 @@ export const declineFriendRequest = asyncHandler(
       });
     }
 
-    const { requestId } = req.body;
+    const { requestId } = req.params as { requestId: string };
 
-    if (!requestId) {
+    if (!requestId || requestId.length != 24) {
       return res.status(400).json({
         isError: true,
-        message: "please send request id",
+        message: "please send invalid request id",
       });
     }
-    successResponse(res);
+
+    const { errorMessage, statusCode, is_error, data } =
+      await declineFriendRequest(requestId, user._id);
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );
 
@@ -106,12 +148,15 @@ export const sendMessage = asyncHandler(
       });
     }
 
-    const { message, receiver } = req.body as {
+    const { message } = req.body as {
       message: string;
+    };
+
+    const { receiver } = req.params as {
       receiver: string;
     };
 
-    if (!receiver) {
+    if (!receiver || receiver.length != 24) {
       return res.status(400).json({
         isError: true,
         message: "please send receiver id",
@@ -124,7 +169,15 @@ export const sendMessage = asyncHandler(
         message: "send proper message",
       });
     }
-    successResponse(res);
+
+    const { errorMessage, statusCode, is_error, data } =
+      await createPersonalChat(user._id, receiver, message);
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );
 
@@ -139,7 +192,33 @@ export const getPersonalMessage = asyncHandler(
       });
     }
 
-    successResponse(res);
+    const { friendId } = req.params as { friendId: string };
+    if (!friendId || friendId.length != 24) {
+      return errorResponse(res, 403, "please send valid friend id");
+    }
+
+    const page = req.query.page as string;
+    let pageNum = parseInt(page);
+
+    if (!pageNum) {
+      pageNum = 1;
+    }
+
+    const messagePerPage = 25;
+    const skipCount = (pageNum - 1) * messagePerPage;
+
+    const { errorMessage, data, statusCode, is_error } = await getMessage(
+      friendId,
+      user._id,
+      messagePerPage,
+      skipCount,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );
 
@@ -154,6 +233,14 @@ export const getAllFriendsController = asyncHandler(
       });
     }
 
-    successResponse(res);
+    const { data, is_error, statusCode, errorMessage } = await getAllFriends(
+      user._id,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
   },
 );
