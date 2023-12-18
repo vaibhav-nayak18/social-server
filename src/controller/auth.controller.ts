@@ -157,7 +157,7 @@ export const authenticateUser = asyncHandler(
     const userString = JSON.stringify({
       username: user.username,
       email: user.email,
-      id: user._id,
+      _id: user._id,
     });
 
     await redis.set(`user:${payload.id}`, userString);

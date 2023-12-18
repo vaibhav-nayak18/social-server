@@ -9,6 +9,7 @@ import {
   getAllGroupsController,
   deleteGroupsController,
 } from "../controller/group.controller.js";
+import { authenticateUser } from "../controller/auth.controller.js";
 
 export const groupRoute = express.Router();
 

@@ -4,13 +4,13 @@ import jwt from "jsonwebtoken";
 import redis from "../config/redis.js";
 import { UserRequest } from "../types/user.type.js";
 import { getUserById } from "../services/auth.services.js";
+import { log } from "console";
 
 export const authorizationUser = asyncHandler(
   async (req: UserRequest, res: Response, next: NextFunction) => {
     const token =
       req.cookies?.access_token ||
       req.headers["authorization"]?.replace("Bearer ", "");
-    console.log("cookies", req.cookies);
 
     if (!token) {
       return res.status(403).json({
@@ -30,6 +30,8 @@ export const authorizationUser = asyncHandler(
 
     const cacheUser = await redis.get(`user:${payload.id}`);
 
+    log("user", cacheUser);
+
     if (cacheUser) {
       const user = JSON.parse(cacheUser);
       req.user = user;
@@ -47,9 +49,11 @@ export const authorizationUser = asyncHandler(
     }
 
     const userString = JSON.stringify(user);
+    log(userString, "user string");
 
     await redis.set(`user:${payload.id}`, userString);
     req.user = user;
+    log(req.user);
     next();
   },
 );

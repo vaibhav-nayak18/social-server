@@ -17,19 +17,19 @@ import {
   removeFromTheGroup,
 } from "../services/group.services.js";
 import { sendMessage } from "./personal.controller.js";
+import { log } from "console";
 
 export const createGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
-    if (!user) {
+    if (!user._id) {
       return errorResponse(res, 403, "please login");
     }
 
     const body = req.body as createGroupType;
     const { isError, message, verifiedData } =
       await validateInput<createGroupType>(body, groupSchema);
-
     if (isError || !verifiedData) {
       return errorResponse(res, 400, message);
     }

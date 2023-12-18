@@ -7,11 +7,17 @@ import { Users } from "../model/user.js";
 import { IUser } from "../types/user.type.js";
 import { GroupChats } from "../model/groupChat.js";
 import { IGroupChat } from "../types/chat.type.js";
+import { log } from "console";
 
-export async function createGroup(userInput: createGroupType, userId: string) {
-  let groups = (await Groups.findOne({ name: userInput.group_name })) as IGroup;
+export async function createGroup(
+  userInput: createGroupType,
+  userId: Types.ObjectId,
+) {
+  const isGroupExist = (await Groups.findOne({
+    name: userInput.group_name,
+  })) as IGroup;
 
-  if (groups) {
+  if (isGroupExist) {
     return serviceResult(
       true,
       `Try different group name. ${userInput.group_name} already exist `,
@@ -19,10 +25,10 @@ export async function createGroup(userInput: createGroupType, userId: string) {
     );
   }
 
-  groups = (await Groups.create({
+  const groups = (await Groups.create({
     name: userInput.group_name,
-    admin: userId,
     category: userInput.category,
+    admin: userId,
   })) as IGroup;
 
   if (!groups) {

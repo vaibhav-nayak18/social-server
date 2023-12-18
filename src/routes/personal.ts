@@ -23,3 +23,4 @@ personalRoute.delete(
 personalRoute.put("/chat/:friendId", isFriend, sendMessage);
 personalRoute.get("/chat/:friendId", isFriend, getPersonalMessage);
 personalRoute.delete("/remove/:friendId", isFriend, removeFriendController);
+personalRoute.get("/:userId", getAllFriendsController);

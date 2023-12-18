@@ -14,6 +14,11 @@ const groupSchema = new Schema<IGroup>({
     required: true,
   },
 
+  category: {
+    type: String,
+    required: true,
+  },
+
   users: [
     {
       type: Schema.Types.ObjectId,
