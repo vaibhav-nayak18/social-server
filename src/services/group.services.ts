@@ -50,7 +50,7 @@ export async function joinGroup(groupId: string, userId: Types.ObjectId) {
   }
 
   groups.users.forEach((val) => {
-    if (val.equals(userId)) {
+    if (val && val.equals(userId)) {
       isExist = true;
     }
   });
@@ -79,7 +79,22 @@ export async function leaveGroup(groupId: string, userId: Types.ObjectId) {
     return serviceResult(true, "groups is not present", 404);
   }
 
-  groups.users = groups.users.filter((val) => val != userId);
+  let isPresent = false;
+
+  groups.users = groups.users.filter((val) => {
+    if (val) {
+      if (val.equals(userId)) {
+        isPresent = true;
+      }
+      return !val.equals(userId);
+    }
+
+    return false;
+  });
+
+  if (!isPresent) {
+    return serviceResult(true, "You are not a part of the group", 403);
+  }
 
   groups = await groups.save();
 
@@ -91,7 +106,7 @@ export async function leaveGroup(groupId: string, userId: Types.ObjectId) {
     );
   }
 
-  return serviceResult(false, "successfully left the group", 200);
+  return serviceResult(false, "successfully left the group", 200, {});
 }
 
 export async function removeFromTheGroup(

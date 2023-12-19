@@ -12,7 +12,7 @@ export const groupSchema = z.object({
 });
 
 export const messageSchema = z.object({
-  chatMessage: z
+  message: z
     .string({ required_error: "Message should not be empty" })
     .min(1, "message shouldn't be empty")
     .max(50, "character limit exceeded. limit is 80"),

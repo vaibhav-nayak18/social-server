@@ -30,11 +30,15 @@ export const authorizationUser = asyncHandler(
 
     const cacheUser = await redis.get(`user:${payload.id}`);
 
-    log("user", cacheUser);
-
     if (cacheUser) {
-      const user = JSON.parse(cacheUser);
+      const user = JSON.parse(cacheUser) as {
+        _id: string;
+        email: string;
+        username: string;
+      };
+
       req.user = user;
+      log("user", req.user);
       return next();
     }
 
@@ -48,12 +52,17 @@ export const authorizationUser = asyncHandler(
       });
     }
 
-    const userString = JSON.stringify(user);
-    log(userString, "user string");
+    const newUser = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    };
+
+    const userString = JSON.stringify(newUser);
 
     await redis.set(`user:${payload.id}`, userString);
-    req.user = user;
-    log(req.user);
+    req.user = newUser;
+    log("user", req.user);
     next();
   },
 );

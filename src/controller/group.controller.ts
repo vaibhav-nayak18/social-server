@@ -70,7 +70,6 @@ export const joinGroupController = asyncHandler(
       user._id,
     );
 
-    console.log("here ");
     if (is_error) {
       return errorResponse(res, statusCode, errorMessage);
     }
@@ -101,6 +100,7 @@ export const leaveGroupController = asyncHandler(
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);
     }
+    log("hello", is_error);
 
     successResponse(res, data, errorMessage);
   },
@@ -232,7 +232,7 @@ export const sendGroupMessage = asyncHandler(
     const body = req.body;
 
     const { message, isError, verifiedData } = await validateInput<{
-      chatMessage: string;
+      message: string;
     }>(body, messageSchema);
 
     if (isError || !verifiedData) {
@@ -243,7 +243,7 @@ export const sendGroupMessage = asyncHandler(
     }
 
     const { data, is_error, statusCode, errorMessage } = await createMessage(
-      verifiedData.chatMessage,
+      verifiedData.message,
       groupId,
       user._id,
     );

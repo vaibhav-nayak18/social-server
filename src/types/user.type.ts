@@ -17,5 +17,9 @@ export type loginType = z.infer<typeof loginSchema>;
 export type registerType = z.infer<typeof registerSchema>;
 
 export interface UserRequest extends Request {
-  user?: IUser;
+  user?: {
+    _id: string;
+    email: string;
+    username: string;
+  };
 }
