@@ -12,6 +12,7 @@ import {
   deleteGroup,
   getAllGroups,
   getChats,
+  getGroup,
   joinGroup,
   leaveGroup,
   removeFromTheGroup,
@@ -243,6 +244,32 @@ export const sendGroupMessage = asyncHandler(
 
     const { data, is_error, statusCode, errorMessage } = await createMessage(
       verifiedData.chatMessage,
+      groupId,
+      user._id,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
+  },
+);
+
+export const getSingleGroupController = asyncHandler(
+  async (req: UserRequest, res: Response) => {
+    const user = req.user as IUser;
+
+    if (!user) {
+      return errorResponse(res, 403, "please login");
+    }
+
+    const { groupId } = req.params;
+    if (!groupId || groupId.length != 24) {
+      return errorResponse(res, 403, "Group is not present");
+    }
+
+    const { data, is_error, statusCode, errorMessage } = await getGroup(
       groupId,
       user._id,
     );

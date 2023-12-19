@@ -142,6 +142,28 @@ export async function removeFromTheGroup(
   );
 }
 
+export async function getGroup(groupId: string, userId: Types.ObjectId) {
+  const group = (await Groups.findById(groupId)) as IGroup;
+
+  let isUserExits = false;
+
+  if (group.admin.equals(userId)) {
+    isUserExits = true;
+  }
+
+  group.users.forEach((val) => {
+    if (val.equals(userId)) {
+      isUserExits = true;
+    }
+  });
+
+  if (!isUserExits) {
+    return serviceResult(true, "Groups is not present", 403);
+  }
+
+  return serviceResult(false, "success", 200, group);
+}
+
 export async function createMessage(
   message: string,
   groupId: string,
@@ -216,7 +238,7 @@ export async function deleteGroup(groupId: string, adminId: Types.ObjectId) {
   let isAdmin = false;
 
   if (!group) {
-    return serviceResult(true, "Please try agian later", 500);
+    return serviceResult(true, "Group is not present. ", 500);
   }
 
   if (group.admin.equals(adminId)) {
