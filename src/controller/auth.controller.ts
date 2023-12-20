@@ -44,7 +44,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     isError: is_Error,
     data: {
       username: user.username,
-      id: user._id,
+      _id: user._id,
     },
   });
 });
@@ -83,7 +83,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const userString = JSON.stringify({
     username: user.username,
     email: user.email,
-    id: user._id,
+    _id: user._id,
   });
 
   await redis.set(`user:${user._id}`, userString);
@@ -93,7 +93,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     isError: is_Error,
     data: {
       username: user.username,
-      id: user._id,
+      _id: user._id,
       email: user.email,
     },
   });
@@ -134,7 +134,7 @@ export const authenticateUser = asyncHandler(
         isError: false,
         data: {
           username: user.username,
-          id: user._id,
+          _id: user._id,
           email: user.email,
         },
       });
@@ -168,7 +168,7 @@ export const authenticateUser = asyncHandler(
       data: {
         username: user.username,
         email: user.email,
-        id: user._id,
+        _id: user._id,
       },
     });
   },
