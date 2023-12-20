@@ -12,15 +12,14 @@ import {
 
 export const personalRoute = express.Router();
 
+personalRoute.get("/", getAllFriendsController);
 personalRoute.post("/create", sendFriendRequestController);
 personalRoute.post("/accept/:requestId", acceptFriendRequestController);
-
+personalRoute.put("/chat/:friendId", isFriend, sendMessage);
+personalRoute.get("/chat/:friendId", isFriend, getPersonalMessage);
+personalRoute.delete("/remove/:friendId", isFriend, removeFriendController);
 personalRoute.delete(
   "/decline/:requestId",
   isFriend,
   declineFriendRequestController,
 );
-personalRoute.put("/chat/:friendId", isFriend, sendMessage);
-personalRoute.get("/chat/:friendId", isFriend, getPersonalMessage);
-personalRoute.delete("/remove/:friendId", isFriend, removeFriendController);
-personalRoute.get("/:userId", getAllFriendsController);

@@ -60,7 +60,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", authorizationUser, userRoute);
 
 // personal routes
-app.use("/api/v1/notification", authorizationUser, personalRoute);
+app.use("/api/v1/personal", authorizationUser, personalRoute);
 
 //group routes
 app.use("/api/v1/group", authorizationUser, groupRoute);

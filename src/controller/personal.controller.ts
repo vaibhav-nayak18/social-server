@@ -11,6 +11,7 @@ import {
   getMessage,
   removeFriend,
 } from "../services/personal.services.js";
+import { log } from "console";
 
 export const sendFriendRequestController = asyncHandler(
   async (req: UserRequest, res: Response) => {
@@ -25,7 +26,8 @@ export const sendFriendRequestController = asyncHandler(
 
     const { friendId } = req.body as { friendId: string };
 
-    if (!friendId && friendId.length != 24) {
+    log(user);
+    if (!friendId || friendId.length !== 24) {
       return res.status(400).json({
         isError: true,
         message: "please send user id",
@@ -56,7 +58,7 @@ export const removeFriendController = asyncHandler(
 
     const { friendId } = req.params as { friendId: string };
 
-    if (!friendId || friendId.length != 24) {
+    if (!friendId || friendId.length !== 24) {
       return res.status(400).json({
         isError: true,
         message: "please send another user id",
