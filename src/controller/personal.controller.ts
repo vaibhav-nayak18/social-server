@@ -118,9 +118,7 @@ export const declineFriendRequestController = asyncHandler(
         message: "please login",
       });
     }
-
     const { requestId } = req.params as { requestId: string };
-
     if (!requestId || requestId.length != 24) {
       return res.status(400).json({
         isError: true,
@@ -154,11 +152,11 @@ export const sendMessage = asyncHandler(
       message: string;
     };
 
-    const { receiver } = req.params as {
-      receiver: string;
+    const { friendId } = req.params as {
+      friendId: string;
     };
 
-    if (!receiver || receiver.length != 24) {
+    if (!friendId || friendId.length != 24) {
       return res.status(400).json({
         isError: true,
         message: "please send receiver id",
@@ -173,7 +171,7 @@ export const sendMessage = asyncHandler(
     }
 
     const { errorMessage, statusCode, is_error, data } =
-      await createPersonalChat(user._id, receiver, message);
+      await createPersonalChat(user._id, friendId, message);
 
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);

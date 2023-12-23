@@ -17,11 +17,17 @@ export const isFriend = asyncHandler(
       return errorResponse(res, 403, "Invalid friend Id");
     }
 
+    let isAlreadyFriend = false;
+
     user.friends.forEach((val) => {
       if (val.equals(friendId)) {
-        return next();
+        isAlreadyFriend = true;
       }
     });
+
+    if (isAlreadyFriend) {
+      return next();
+    }
     return errorResponse(res, 404, "Please send a friend request");
   },
 );

@@ -15,11 +15,12 @@ export const personalRoute = express.Router();
 personalRoute.get("/", getAllFriendsController);
 personalRoute.post("/create", sendFriendRequestController);
 personalRoute.post("/accept/:requestId", acceptFriendRequestController);
+personalRoute.delete("/decline/:requestId", declineFriendRequestController);
 personalRoute.put("/chat/:friendId", isFriend, sendMessage);
 personalRoute.get("/chat/:friendId", isFriend, getPersonalMessage);
 personalRoute.delete("/remove/:friendId", isFriend, removeFriendController);
-personalRoute.delete(
-  "/decline/:requestId",
-  isFriend,
-  declineFriendRequestController,
-);
+
+// 4 - 65872328d33a6515c270f120
+// 3 - 6587231fd33a6515c270f11c
+// 2 - 65872309d33a6515c270f114
+// 1 - 658722ffd33a6515c270f110

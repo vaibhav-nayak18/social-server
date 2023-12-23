@@ -54,8 +54,6 @@ export async function createFriendRequest(createrId: string, friendId: string) {
     return serviceResult(true, "Already friend", 400);
   }
 
-  log("here", createrId);
-
   const request = await Notifications.create({
     senderId: createrId,
     to: friendId,
@@ -83,7 +81,7 @@ export async function declineFriendRequest(
     return serviceResult(true, "Please send valid request Id", 404);
   }
 
-  if (userId.equals(request.to)) {
+  if (!request.to.equals(userId)) {
     return serviceResult(true, "Please send valid request Id", 404);
   }
 
@@ -100,7 +98,6 @@ export async function acceptFriendRequest(
   if (!request) {
     return serviceResult(true, "Please send valid request Id", 404);
   }
-
   if (!request.to.equals(userId)) {
     return serviceResult(true, "Please send valid request Id", 404);
   }
@@ -115,8 +112,11 @@ export async function acceptFriendRequest(
   friend.friends.push(user._id);
   user.friends.push(friend._id);
 
-  await friend.save();
-  await user.save();
+  await Promise.all([
+    friend.save(),
+    user.save(),
+    Notifications.findOneAndDelete({ _id: request._id }),
+  ]);
 
   return serviceResult(false, "Succesfully accepted", 200, {
     user: {
@@ -137,8 +137,8 @@ export async function createPersonalChat(
 ) {
   const message = await PersonalChats.create({
     message: chatMessage,
-    to: friendId,
     sender: userId,
+    receiver: friendId,
   });
 
   if (!message) {
