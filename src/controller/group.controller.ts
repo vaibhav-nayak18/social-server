@@ -17,7 +17,6 @@ import {
   leaveGroup,
   removeFromTheGroup,
 } from "../services/group.services.js";
-import { sendMessage } from "./personal.controller.js";
 import { log } from "console";
 
 export const createGroupController = asyncHandler(
@@ -163,6 +162,7 @@ export const getMessagesController = asyncHandler(
       groupId,
       messagePerPage,
       skipCount,
+      user._id,
     );
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);

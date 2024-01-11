@@ -15,8 +15,8 @@ import {
 export const groupRoute = express.Router();
 
 groupRoute.get("/", getAllGroupsController);
-groupRoute.get("/:groupId", getSingleGroupController);
 groupRoute.post("/create", createGroupController);
+groupRoute.get("/:groupId", getSingleGroupController);
 groupRoute.put("/join/:groupId", joinGroupController);
 groupRoute.delete("/remove/:groupId", removeMemberController);
 groupRoute.delete("/delete/:groupId", deleteGroupsController);

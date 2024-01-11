@@ -1,13 +1,12 @@
-import { Types, ObjectId } from "mongoose";
+import { Types } from "mongoose";
 
 import { Groups } from "../model/group.js";
 import { IGroup, createGroupType } from "../types/group.type.js";
-import { errorResponse, serviceResult } from "../util/response.js";
+import { serviceResult } from "../util/response.js";
 import { Users } from "../model/user.js";
 import { IUser } from "../types/user.type.js";
 import { GroupChats } from "../model/groupChat.js";
 import { IGroupChat } from "../types/chat.type.js";
-import { log } from "console";
 
 export async function createGroup(
   userInput: createGroupType,
@@ -117,7 +116,7 @@ export async function removeFromTheGroup(
   let groups = (await Groups.findById(groupId)) as IGroup;
 
   if (!groups) {
-    return serviceResult(true, "Admin can only kickout groups memebers", 404);
+    return serviceResult(true, "Invalid groupId", 404);
   }
 
   if (!groups.admin.equals(userId)) {
@@ -160,6 +159,10 @@ export async function removeFromTheGroup(
 export async function getGroup(groupId: string, userId: Types.ObjectId) {
   const group = (await Groups.findById(groupId)) as IGroup;
 
+  if (!group) {
+    return serviceResult(true, "Invalid groupId", 404);
+  }
+
   let isUserExits = false;
 
   if (group.admin.equals(userId)) {
@@ -173,7 +176,7 @@ export async function getGroup(groupId: string, userId: Types.ObjectId) {
   });
 
   if (!isUserExits) {
-    return serviceResult(true, "Groups is not present", 403);
+    return serviceResult(true, "user is not present", 403);
   }
 
   return serviceResult(false, "success", 200, group);
@@ -184,9 +187,10 @@ export async function createMessage(
   groupId: string,
   userId: Types.ObjectId,
 ) {
-  let groups = (await Groups.findById(groupId)) as IGroup;
-  if (!groups) {
-    return serviceResult(true, "Group id is invalid", 404);
+  const res = await getGroup(groupId, userId);
+
+  if (res.is_error) {
+    return res;
   }
 
   let groupChat = (await GroupChats.create({
@@ -234,7 +238,14 @@ export async function getChats(
   groupId: string,
   messagePerPage: number,
   skipCount: number,
+  userId: Types.ObjectId,
 ) {
+  const res = await getGroup(groupId, userId);
+
+  if (res.is_error) {
+    return res;
+  }
+
   const groupChats = (await GroupChats.find({ groupId })
     .sort({ createAt: -1 })
     .limit(messagePerPage)

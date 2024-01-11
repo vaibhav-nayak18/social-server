@@ -16,6 +16,9 @@ tags:
   - name: Groups
     description: Endpoints related to group management
 
+  - name: Personal
+    description: Endpoint related to Personal message
+
 paths:
   /health:
     get:
@@ -118,32 +121,24 @@ paths:
               example:
                 message: User is not authenticated
                 isError: true
-  /group:
+  /personal:
     get:
-      summary: Get All Groups
-      description: Retrieve a list of all groups.
-      tags:
-        - Groups
+      summary: Get all friends
+      operationId: getAllFriends
       security:
         - bearerAuth: []
+      tags:
+        - Personal
       responses:
         "200":
-          description: Successful operation
-          content:
-            application/json:
-              example:
-                groups:
-                  - groupId: 1
-                    groupName: "Group 1"
-                  - groupId: 2
-                    groupName: "Group 2"
+          description: A list of friends
     post:
-      summary: Create Group
-      description: Create a new group.
-      tags:
-        - Groups
+      summary: Send friend request
+      operationId: sendFriendRequest
       security:
         - bearerAuth: []
+      tags:
+        - Personal
       requestBody:
         required: true
         content:
@@ -151,46 +146,245 @@ paths:
             schema:
               type: object
               properties:
-                groupName:
+                groupname:
+                  type: string
+                category:
                   type: string
       responses:
-        "201":
-          description: Group created successfully
-          content:
-            application/json:
-              example:
-                message: Group created successfully
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              example:
-                message: Invalid request data
+        "200":
+          description: Friend request sent successfully
 
-    put:
-      summary: Join Group
-      description: Join an existing group.
+  /personal/accept/{requestId}:
+    post:
+      summary: Accept friend request
+      operationId: acceptFriendRequest
       tags:
-        - Groups
-      security:
-        - bearerAuth: []
+        - Personal
       parameters:
-        - in: path
-          name: groupId
+        - name: requestId
+          in: path
           required: true
-          description: ID of the group to join
           schema:
-            type: integer
+            type: string
       responses:
         "200":
-          description: Joined group successfully
-          content:
-            application/json:
-              example:
-                message: Joined group successfully
-        "404":
-          description: Group not found
-          content:
-            application/json:
-              example:
-                message: Group not found
+          description: Friend request accepted successfully
+
+  /personal/decline/{requestId}:
+    delete:
+      summary: Decline friend request
+      operationId: declineFriendRequest
+      tags:
+        - Personal
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Friend request declined successfully
+
+  /personal/chat/{friendId}:
+    put:
+      summary: Send a message to a friend
+      operationId: sendMessage
+      tags:
+        - Personal
+      parameters:
+        - name: friendId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Message sent successfully
+    get:
+      summary: Get personal messages with a friend
+      operationId: getPersonalMessage
+      tags:
+        - Personal
+      parameters:
+        - name: friendId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of personal messages with the friend
+
+  /personal/remove/{friendId}:
+    delete:
+      summary: Remove friend
+      tags:
+        - Personal
+      operationId: removeFriend
+      parameters:
+        - name: friendId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Friend removed successfully
+  /group:
+    get:
+      summary: Get all groups
+      operationId: getAllGroups
+      tags:
+        - Groups
+      responses:
+        "200":
+          description: A list of groups
+  /group/create:
+    post:
+      summary: Create a new group
+      operationId: createGroup
+      tags:
+        - Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_name:
+                  type: string
+                category:
+                  type: string
+      responses:
+        "200":
+          description: Group created successfully
+
+  /group/{groupId}:
+    get:
+      summary: Get details of a single group
+      operationId: getSingleGroup
+      tags:
+        - Groups
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Details of the group
+
+  /group/join/{groupId}:
+    put:
+      summary: Join a group
+      operationId: joinGroup
+      tags:
+        - Groups
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Joined the group successfully
+
+  /group/remove/{groupId}:
+    delete:
+      summary: Remove a member from a group
+      operationId: removeMember
+      tags:
+        - Groups
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+      responses:
+        "200":
+          description: Member removed from the group successfully
+
+  /group/delete/{groupId}:
+    delete:
+      summary: Delete a group
+      operationId: deleteGroup
+      tags:
+        - Groups
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Group deleted successfully
+
+  /group/leave/{groupId}:
+    delete:
+      summary: Leave a group
+      operationId: leaveGroup
+      tags:
+        - Groups
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Left the group successfully
+
+  /group/chats/{groupId}:
+    get:
+      summary: Get messages from a group
+      operationId: getGroupMessages
+      tags:
+        - Groups
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of messages from the group
+    put:
+      summary: Send a message to a group
+      operationId: sendGroupMessage
+      tags:
+        - Groups
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      responses:
+        "200":
+          description: Message sent to the group successfully
