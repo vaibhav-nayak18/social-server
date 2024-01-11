@@ -294,7 +294,7 @@ paths:
           description: Joined the group successfully
 
   /group/remove/{groupId}:
-    delete:
+    post:
       summary: Remove a member from a group
       operationId: removeMember
       tags:
@@ -319,7 +319,7 @@ paths:
           description: Member removed from the group successfully
 
   /group/delete/{groupId}:
-    delete:
+    post:
       summary: Delete a group
       operationId: deleteGroup
       tags:
@@ -335,7 +335,7 @@ paths:
           description: Group deleted successfully
 
   /group/leave/{groupId}:
-    delete:
+    post:
       summary: Leave a group
       operationId: leaveGroup
       tags:

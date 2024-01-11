@@ -229,7 +229,7 @@ export const sendGroupMessage = asyncHandler(
       return errorResponse(res, 403, "Group is not present");
     }
 
-    const body = req.body;
+    const body = req.body as { message: string };
 
     const { message, isError, verifiedData } = await validateInput<{
       message: string;

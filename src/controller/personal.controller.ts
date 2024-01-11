@@ -26,7 +26,6 @@ export const sendFriendRequestController = asyncHandler(
 
     const { friendId } = req.body as { friendId: string };
 
-    log(user);
     if (!friendId || friendId.length !== 24) {
       return res.status(400).json({
         isError: true,
