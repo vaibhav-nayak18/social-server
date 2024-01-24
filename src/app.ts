@@ -37,10 +37,10 @@ app.use(cookieParser());
 
 //  test routes
 app.get("/", (_req, res) => {
-  res.sendFile(__dirname + "/index.html");
-  // res.status(200).json({
-  //   message: "hello world!",
-  // });
+  // res.sendFile(__dirname + "/index.html");
+  res.status(200).json({
+    message: "hello world!",
+  });
 });
 
 app.use("/api/docs/", swagger.serve, swagger.setup(swaggerDocument, {}));
