@@ -1,20 +1,25 @@
 import { RedisClientType, createClient } from "redis";
-import { REDIS, PASSWORD, ENV } from "./env.js";
+import { REDIS_PASSWORD, REDIS_PORT, REDIS } from "./env.js";
 import { log } from "console";
 
-let redis: RedisClientType | undefined;
-if (ENV === "render") {
-  redis = createClient({
-    url: REDIS,
-    password: PASSWORD,
-  });
-} else {
-  redis = createClient({
-    url: REDIS,
-  });
-}
+// let redis: RedisClientType | undefined;
+// if (ENV === "render") {
+//   redis = createClient({
+//     url: REDIS,
+//     password: PASSWORD,
+//   });
+// } else {
+//   redis = createClient({
+//     url: REDIS,
+//   });
+// }
+//
+log("redis", REDIS, REDIS_PASSWORD);
 
-const client = redis;
+const client = createClient({
+  password: REDIS_PASSWORD,
+  url: REDIS,
+});
 
 try {
   client.on("error", (err) => console.log("Redis Error: ", err));
@@ -22,5 +27,7 @@ try {
 } catch (error) {
   log("redis error", error);
 }
+
+log("redis", REDIS_PORT);
 
 export default client;

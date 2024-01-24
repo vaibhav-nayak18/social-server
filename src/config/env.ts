@@ -9,3 +9,7 @@ export const ORIGIN = process.env.ORIGIN as string;
 export const REDIS = process.env.REDIS as string;
 export const PASSWORD = process.env.PASSWORD as string;
 export const ENV = process.env.ENV as string;
+
+export const HOST = process.env.HOST;
+export const REDIS_PORT = parseInt(process.env.REDIS_PORT!);
+export const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
