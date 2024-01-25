@@ -6,7 +6,7 @@ import { loginSchema, registerSchema } from "../validators/user.schema.js";
 import { createUser, getUser, getUserById } from "../services/auth.services.js";
 import jwt from "jsonwebtoken";
 import { cookieToken } from "../middleware/cookieToken.js";
-import redis from "../config/redis.js";
+// import redis from "../config/redis.js";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body as loginType;
@@ -81,13 +81,13 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   const token = await cookieToken(user, res);
 
-  const userString = JSON.stringify({
-    username: user.username,
-    email: user.email,
-    _id: user._id,
-  });
-
-  await redis.set(`user:${user._id}`, userString);
+  // const userString = JSON.stringify({
+  //   username: user.username,
+  //   email: user.email,
+  //   _id: user._id,
+  // });
+  //
+  // await redis.set(`user:${user._id}`, userString);
 
   return res.status(statusCode).json({
     message: "Account created successful",
@@ -123,25 +123,25 @@ export const authenticateUser = asyncHandler(
       });
     }
 
-    const cacheUser = await redis.get(`user:${payload.id}`);
-
-    if (cacheUser) {
-      const user = JSON.parse(cacheUser) as {
-        _id: string;
-        username: string;
-        email: string;
-      };
-      return res.status(200).json({
-        message: "User is authenticated",
-        isError: false,
-        data: {
-          username: user.username,
-          _id: user._id,
-          email: user.email,
-          token,
-        },
-      });
-    }
+    // const cacheUser = await redis.get(`user:${payload.id}`);
+    //
+    // if (cacheUser) {
+    //   const user = JSON.parse(cacheUser) as {
+    //     _id: string;
+    //     username: string;
+    //     email: string;
+    //   };
+    //   return res.status(200).json({
+    //     message: "User is authenticated",
+    //     isError: false,
+    //     data: {
+    //       username: user.username,
+    //       _id: user._id,
+    //       email: user.email,
+    //       token,
+    //     },
+    //   });
+    // }
 
     const {
       data: user,
@@ -157,13 +157,12 @@ export const authenticateUser = asyncHandler(
       });
     }
 
-    const userString = JSON.stringify({
-      username: user.username,
-      email: user.email,
-      _id: user._id,
-    });
-
-    await redis.set(`user:${payload.id}`, userString);
+    // const userString = JSON.stringify({ username: user.username,
+    //   email: user.email,
+    //   _id: user._id,
+    // });
+    //
+    // await redis.set(`user:${payload.id}`, userString);
 
     return res.status(statusCode).json({
       message: "User is authenticated",
