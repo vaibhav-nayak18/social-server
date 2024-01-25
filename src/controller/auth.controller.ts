@@ -37,7 +37,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  await cookieToken(user, res);
+  const token = await cookieToken(user, res);
 
   return res.status(statusCode).json({
     message: "Login successful",
@@ -45,6 +45,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     data: {
       username: user.username,
       _id: user._id,
+      token,
     },
   });
 });
@@ -78,7 +79,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  await cookieToken(user, res);
+  const token = await cookieToken(user, res);
 
   const userString = JSON.stringify({
     username: user.username,
@@ -95,6 +96,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       username: user.username,
       _id: user._id,
       email: user.email,
+      token,
     },
   });
 });
@@ -136,6 +138,7 @@ export const authenticateUser = asyncHandler(
           username: user.username,
           _id: user._id,
           email: user.email,
+          token,
         },
       });
     }
@@ -169,6 +172,7 @@ export const authenticateUser = asyncHandler(
         username: user.username,
         email: user.email,
         _id: user._id,
+        token,
       },
     });
   },
