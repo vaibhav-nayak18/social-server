@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
 import swagger from "swagger-ui-express";
-import path from "path";
 import { hostname } from "os";
-const __dirname = path.resolve();
+import morgan from "morgan";
 
 import { createServer } from "http";
 import cookieParser from "cookie-parser";
@@ -20,6 +19,10 @@ import { swaggerDocument } from "./config/swagger.js";
 
 export const app = express();
 export const server = createServer(app);
+
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms"),
+);
 
 app.use(
   cors({
