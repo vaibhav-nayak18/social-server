@@ -2,7 +2,7 @@ import { Response } from "express";
 import { ACCESS_TOKEN_EXP } from "../config/env.js";
 import { IUser } from "../types/user.type.js";
 
-export async function cookieToken(user: IUser, res: Response): Promise<void> {
+export async function cookieToken(user: IUser, res: Response): Promise<string> {
   const token = await user.getAccessToken();
 
   const time = ACCESS_TOKEN_EXP;
