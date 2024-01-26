@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "./asyncHandler.js";
 import jwt from "jsonwebtoken";
-import redis from "../config/redis.js";
+// import redis from "../config/redis.js";
 import { UserRequest } from "../types/user.type.js";
 import { getUserById } from "../services/auth.services.js";
 import { log } from "console";
@@ -27,20 +27,20 @@ export const authorizationUser = asyncHandler(
         message: "please login again",
       });
     }
-
-    const cacheUser = await redis.get(`user:${payload.id}`);
-
-    if (cacheUser) {
-      const user = JSON.parse(cacheUser) as {
-        _id: string;
-        email: string;
-        username: string;
-      };
-
-      req.user = user;
-      log("user", req.user);
-      return next();
-    }
+    //
+    // const cacheUser = await redis.get(`user:${payload.id}`);
+    //
+    // if (cacheUser) {
+    //   const user = JSON.parse(cacheUser) as {
+    //     _id: string;
+    //     email: string;
+    //     username: string;
+    //   };
+    //
+    //   req.user = user;
+    //   log("user", req.user);
+    //   return next();
+    // }
 
     const { data: user, is_Error, statusCode } = await getUserById(payload.id);
 
@@ -58,9 +58,9 @@ export const authorizationUser = asyncHandler(
       email: user.email,
     };
 
-    const userString = JSON.stringify(newUser);
+    // const userString = JSON.stringify(newUser);
 
-    await redis.set(`user:${payload.id}`, userString);
+    // await redis.set(`user:${payload.id}`, userString);
     req.user = newUser;
     log("user", req.user);
     next();
