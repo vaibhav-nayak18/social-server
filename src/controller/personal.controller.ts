@@ -10,8 +10,31 @@ import {
   getAllFriends,
   getMessage,
   removeFriend,
+  getAllUsers,
 } from "../services/personal.services.js";
-import { log } from "console";
+
+export const getUsersListController = asyncHandler(
+  async (req: UserRequest, res: Response) => {
+    const user = req.user as IUser;
+
+    if (!user) {
+      return res.status(403).json({
+        isError: true,
+        message: "please login",
+      });
+    }
+
+    const { data, is_error, statusCode, errorMessage } = await getAllUsers(
+      user._id,
+    );
+
+    if (is_error || !data) {
+      return errorResponse(res, statusCode, errorMessage);
+    }
+
+    successResponse(res, data, errorMessage);
+  },
+);
 
 export const sendFriendRequestController = asyncHandler(
   async (req: UserRequest, res: Response) => {

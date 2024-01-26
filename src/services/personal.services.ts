@@ -7,6 +7,29 @@ import { IPersonalChat } from "../types/chat.type.js";
 import { IUser } from "../types/user.type.js";
 import { log } from "console";
 
+export async function getAllUsers(userId: Types.ObjectId) {
+  const user = await Users.findById(userId).populate("friends", "_id");
+
+  if (!user) {
+    return serviceResult(true, "Invalid userId", 404);
+  }
+
+  const friends = user.friends.map((val) => val._id);
+
+  const nonFriends = await Users.find(
+    { _id: { $nin: [...friends, userId] } },
+    "username _id",
+  );
+
+  if (!nonFriends) {
+    return serviceResult(true, "Internal Error", 500);
+  }
+
+  return serviceResult(false, "success", 200, {
+    users: nonFriends,
+  });
+}
+
 async function isFriendRequestExit(
   createrId: string,
   friendId: string,

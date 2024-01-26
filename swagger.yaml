@@ -153,6 +153,17 @@ paths:
       responses:
         "200":
           description: Friend request sent successfully
+  /personal/users:
+    get:
+      summary: Get all users that are not friends
+      operationId: getAllUsers
+      security:
+        - bearerAuth: []
+      tags:
+        - Personal
+      responses:
+        "200":
+          description: A list of users
 
   /personal/accept/{requestId}:
     post:

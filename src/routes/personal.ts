@@ -8,11 +8,13 @@ import {
   getPersonalMessage,
   removeFriendController,
   getAllFriendsController,
+  getUsersListController,
 } from "../controller/personal.controller.js";
 
 export const personalRoute = express.Router();
 
 personalRoute.get("/", getAllFriendsController);
+personalRoute.get("/users", getUsersListController);
 personalRoute.post("/create", sendFriendRequestController);
 personalRoute.post("/accept/:requestId", acceptFriendRequestController);
 personalRoute.delete("/decline/:requestId", declineFriendRequestController);
