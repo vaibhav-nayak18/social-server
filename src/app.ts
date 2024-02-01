@@ -26,7 +26,7 @@ app.use(
 
 app.use(
   cors({
-    origin: ORIGIN,
+    origin: "*",
     credentials: true,
   }),
 );
