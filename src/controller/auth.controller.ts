@@ -190,11 +190,13 @@ export const logout = asyncHandler(async (req: UserRequest, res: Response) => {
     return errorResponse(res, 403, "please login");
   }
 
-  const token = cookieToken(user, res, "0");
-
+  res.cookie("", {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: true,
+  });
   res.status(200).json({
     message: "logout",
     isError: false,
-    token,
   });
 });
