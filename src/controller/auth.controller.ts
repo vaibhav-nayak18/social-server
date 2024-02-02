@@ -12,6 +12,7 @@ import { createUser, getUser, getUserById } from "../services/auth.services.js";
 import jwt from "jsonwebtoken";
 import { cookieToken } from "../middleware/cookieToken.js";
 import { errorResponse } from "../util/response.js";
+import { log } from "console";
 // import redis from "../config/redis.js";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
@@ -190,7 +191,7 @@ export const logout = asyncHandler(async (req: UserRequest, res: Response) => {
     return errorResponse(res, 403, "please login");
   }
 
-  res.cookie("", {
+  res.cookie("vaibhavnayak", {
     expires: new Date(Date.now()),
     httpOnly: true,
     secure: true,
