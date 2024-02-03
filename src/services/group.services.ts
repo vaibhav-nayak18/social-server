@@ -226,7 +226,10 @@ export async function groupAdmin(groupId: string, userId: Types.ObjectId) {
 
 export async function getAllGroups(userId: Types.ObjectId) {
   let groups = await Groups.find({
-    users: { $nin: [userId] },
+    $nor: [
+      { admin: userId }, // Exclude groups where the specified user is the admin
+      { users: userId }, // Exclude groups where the specified user is in the users array
+    ],
   }).exec();
 
   if (!groups) {
