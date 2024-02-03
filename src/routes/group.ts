@@ -9,14 +9,14 @@ import {
   getAllGroupsController,
   deleteGroupsController,
   sendGroupMessage,
-  getSingleGroupController,
+  getMyGroupController,
 } from "../controller/group.controller.js";
 
 export const groupRoute = express.Router();
 
 groupRoute.get("/", getAllGroupsController);
 groupRoute.post("/create", createGroupController);
-groupRoute.get("/:groupId", getSingleGroupController);
+groupRoute.get("/my", getMyGroupController);
 groupRoute.put("/join/:groupId", joinGroupController);
 groupRoute.post("/remove/:groupId", removeMemberController);
 groupRoute.post("/delete/:groupId", deleteGroupsController);

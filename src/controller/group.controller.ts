@@ -12,7 +12,7 @@ import {
   deleteGroup,
   getAllGroups,
   getChats,
-  getGroup,
+  getMyGroups,
   joinGroup,
   leaveGroup,
   removeFromTheGroup,
@@ -64,16 +64,16 @@ export const joinGroupController = asyncHandler(
       return errorResponse(res, 400, "please send groupid and id");
     }
 
-    const { is_error, statusCode, errorMessage } = await joinGroup(
+    const { is_error, data, statusCode, errorMessage } = await joinGroup(
       groupId,
       user._id,
     );
 
-    if (is_error) {
+    if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);
     }
 
-    successResponse(res, {}, errorMessage);
+    successResponse(res, data, errorMessage);
   },
 );
 
@@ -258,7 +258,7 @@ export const sendGroupMessage = asyncHandler(
   },
 );
 
-export const getSingleGroupController = asyncHandler(
+export const getMyGroupController = asyncHandler(
   async (req: UserRequest, res: Response) => {
     const user = req.user as IUser;
 
@@ -266,13 +266,7 @@ export const getSingleGroupController = asyncHandler(
       return errorResponse(res, 403, "please login");
     }
 
-    const { groupId } = req.params;
-    if (!groupId || groupId.length != 24) {
-      return errorResponse(res, 403, "Group is not present");
-    }
-
-    const { data, is_error, statusCode, errorMessage } = await getGroup(
-      groupId,
+    const { data, is_error, statusCode, errorMessage } = await getMyGroups(
       user._id,
     );
 

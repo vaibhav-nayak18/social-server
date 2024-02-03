@@ -244,8 +244,17 @@ paths:
           description: Friend removed successfully
   /group:
     get:
-      summary: Get all groups
+      summary: Get unjoined groups
       operationId: getAllGroups
+      tags:
+        - Groups
+      responses:
+        "200":
+          description: A list of groups
+  /group/my:
+    get:
+      summary: Get my groups
+      operationId: getmyGroups
       tags:
         - Groups
       responses:

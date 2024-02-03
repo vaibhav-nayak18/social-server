@@ -68,7 +68,7 @@ export async function joinGroup(groupId: string, userId: Types.ObjectId) {
     );
   }
 
-  return serviceResult(false, "successfully joined the group", 200);
+  return serviceResult(false, "successfully joined The group", 200, groups);
 }
 
 export async function leaveGroup(groupId: string, userId: Types.ObjectId) {
@@ -180,6 +180,21 @@ export async function getGroup(groupId: string, userId: Types.ObjectId) {
   }
 
   return serviceResult(false, "success", 200, group);
+}
+
+export async function getMyGroups(userId: Types.ObjectId) {
+  const groups = await Groups.find({
+    $or: [
+      { admin: userId }, // Find groups where the specified user is the admin
+      { users: userId }, // Find groups where the specified user is in the users array
+    ],
+  }).exec();
+
+  if (!groups) {
+    return serviceResult(true, "Something went wrong", 500);
+  }
+
+  return serviceResult(false, "Success", 200, groups);
 }
 
 export async function createMessage(
