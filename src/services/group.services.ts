@@ -224,8 +224,10 @@ export async function groupAdmin(groupId: string, userId: Types.ObjectId) {
   return serviceResult(true, "You are not Group admin.", 403);
 }
 
-export async function getAllGroups() {
-  let groups = await Groups.find({});
+export async function getAllGroups(userId: Types.ObjectId) {
+  let groups = await Groups.find({
+    users: { $nin: [userId] },
+  }).exec();
 
   if (!groups) {
     return serviceResult(true, "something went wrong", 500);

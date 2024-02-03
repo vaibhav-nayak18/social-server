@@ -180,7 +180,9 @@ export const getAllGroupsController = asyncHandler(
       return errorResponse(res, 403, "please login");
     }
 
-    const { data, is_error, statusCode, errorMessage } = await getAllGroups();
+    const { data, is_error, statusCode, errorMessage } = await getAllGroups(
+      user._id,
+    );
 
     if (is_error || !data) {
       return errorResponse(res, statusCode, errorMessage);
