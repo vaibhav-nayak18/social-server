@@ -9,8 +9,8 @@ export async function getNotification(
 ) {
   const notifications = await Notifications.find({ to: userId })
     .sort({ createdAt: -1 })
-    .skip(skipCount)
-    .limit(page)
+    // .skip(skipCount)
+    // .limit(page)
     .populate({
       path: "senderId",
       select: "username email",

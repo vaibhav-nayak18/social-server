@@ -205,12 +205,23 @@ export async function getAllFriends(userId: Types.ObjectId) {
   }
 
   return serviceResult(false, "Success", 200, {
-    user: {
-      _id: user._id,
-      username: user.username,
-      friends: user.friends,
-    },
+    friends: user.friends,
   });
+}
+
+export async function getUsers(userId: Types.ObjectId) {
+  const users = await Users.find({
+    _id: { $ne: userId },
+    friends: { $nin: [userId] },
+  })
+    .select("_id username")
+    .exec();
+
+  if (!users) {
+    return serviceResult(true, "Something went wrong", 500);
+  }
+
+  return serviceResult(false, "Success", 200, users);
 }
 
 export async function removeFriend(userId: Types.ObjectId, friendId: string) {

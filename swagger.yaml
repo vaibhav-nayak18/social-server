@@ -132,9 +132,10 @@ paths:
       responses:
         "200":
           description: A list of friends
+  /personal/create:
     post:
-      summary: Send friend request
-      operationId: sendFriendRequest
+      summary: send a friend request
+      operationId: friend request
       security:
         - bearerAuth: []
       tags:
@@ -146,9 +147,7 @@ paths:
             schema:
               type: object
               properties:
-                groupname:
-                  type: string
-                category:
+                friendId:
                   type: string
       responses:
         "200":

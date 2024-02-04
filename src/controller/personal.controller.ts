@@ -10,7 +10,7 @@ import {
   getAllFriends,
   getMessage,
   removeFriend,
-  getAllUsers,
+  getUsers,
 } from "../services/personal.services.js";
 
 export const getUsersListController = asyncHandler(
@@ -24,7 +24,7 @@ export const getUsersListController = asyncHandler(
       });
     }
 
-    const { data, is_error, statusCode, errorMessage } = await getAllUsers(
+    const { data, is_error, statusCode, errorMessage } = await getUsers(
       user._id,
     );
 

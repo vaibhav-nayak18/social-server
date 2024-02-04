@@ -188,7 +188,9 @@ export async function getMyGroups(userId: Types.ObjectId) {
       { admin: userId }, // Find groups where the specified user is the admin
       { users: userId }, // Find groups where the specified user is in the users array
     ],
-  }).exec();
+  })
+    .select("-users")
+    .exec();
 
   if (!groups) {
     return serviceResult(true, "Something went wrong", 500);
