@@ -19,9 +19,9 @@ const groupChatSchema = new Schema<IGroupChat>({
     required: true,
   },
 
-  createAt: {
+  createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 

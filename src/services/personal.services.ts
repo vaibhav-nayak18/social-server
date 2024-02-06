@@ -164,6 +164,11 @@ export async function createPersonalChat(
     receiver: friendId,
   });
 
+  await message.populate({
+    path: "sender",
+    select: "_id username",
+  });
+
   if (!message) {
     return serviceResult(true, "Something went wrong", 500);
   }
@@ -177,15 +182,18 @@ export async function getMessage(
   messagePerPage: number,
   skipCount: number,
 ) {
-  const getPersonalMessage = (await PersonalChats.find({
+  const getPersonalMessage = await PersonalChats.find({
     $or: [
       { sender: userId, receiver: friendId },
       { sender: friendId, receiver: userId },
     ],
   })
-    .sort({ createAt: -1 })
-    .limit(messagePerPage)
-    .skip(skipCount)) as IPersonalChat[];
+    .sort({ createdAt: -1 })
+    .populate({ path: "sender", select: "_id username" })
+    .skip(skipCount)
+    .limit(messagePerPage);
+
+  log(getPersonalMessage);
 
   if (!getPersonalMessage) {
     return serviceResult(true, "Group is not present", 404);

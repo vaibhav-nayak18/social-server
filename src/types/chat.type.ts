@@ -4,12 +4,12 @@ export interface IGroupChat extends Document {
   message: string;
   groupId: Types.ObjectId;
   sender: Types.ObjectId;
-  createAt: Date;
+  createdAt: Date;
 }
 
 export interface IPersonalChat extends Document {
   message: string;
   receiver: Types.ObjectId;
   sender: Types.ObjectId;
-  createAt: Date;
+  createdAt: Date;
 }
