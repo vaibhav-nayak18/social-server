@@ -189,9 +189,9 @@ export async function getMessage(
     ],
   })
     .sort({ createdAt: -1 })
-    .populate({ path: "sender", select: "_id username" })
-    .skip(skipCount)
-    .limit(messagePerPage);
+    .populate({ path: "sender", select: "_id username" });
+  // .skip(skipCount)
+  // .limit(messagePerPage);
 
   log(getPersonalMessage);
 

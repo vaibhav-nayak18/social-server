@@ -268,14 +268,14 @@ export async function getChats(
     return res;
   }
 
-  const groupChats = (await GroupChats.find({ groupId })
+  const groupChats = await GroupChats.find({ groupId })
     .sort({ createAt: -1 })
     .populate({
       path: "sender",
       select: "username _id",
-    })
-    .limit(messagePerPage)
-    .skip(skipCount)) as IGroupChat[];
+    });
+  // .limit(messagePerPage)
+  // .skip(skipCount)) as IGroupChat[];
 
   if (!groupChats) {
     return serviceResult(true, "Group is not present", 404);
