@@ -164,7 +164,7 @@ export async function createPersonalChat(
     receiver: friendId,
   });
 
-  await message.populate({
+  await message?.populate({
     path: "sender",
     select: "_id username",
   });

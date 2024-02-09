@@ -3,27 +3,25 @@ import { server } from "../app.js";
 import { log } from "console";
 import { SocketServer } from "../socket/index.js";
 
-export const io = new Server(server, {});
+export const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+  },
+});
 
 const socketServer = new SocketServer();
 
 io.on("connection", (socket) => {
-  socket.on("chat message", async (data: { msg: string }) => {
+  socket.on("join user", (data: string) => {
     try {
-      console.log("message: " + data.msg);
-      socket.emit("chat message", data.msg);
+      socketServer.setUser(socket.id, data);
+      log("hello ", socketServer.getUser(data));
     } catch (error) {
       log("error", error);
     }
   });
 
-  socket.on("connect", (data: { userId: string }) => {
-    try {
-      socketServer.setUser(socket.id, data.userId);
-    } catch (error) {
-      log("error", error);
-    }
-  });
+  socket.on("join group", (data: { groupId: string; users: string[] }) => {});
 
   socket.on("disconnect", () => {
     try {
@@ -34,10 +32,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on(
-    "personal message",
-    (data: { senderId: string; receiverId: string; msg: string }) => {
+    "personal chat",
+    (data: {
+      sender: { _id: string; username: string };
+      _id: string;
+      receiver: string;
+      message: string;
+      createdAt: string;
+    }) => {
       try {
-        log("data", data);
+        const id = socketServer.getUser(data.receiver);
+        if (id) {
+          socket.to(id).emit("personal chat", data);
+        }
       } catch (error) {
         log("error", error);
       }
@@ -92,7 +99,7 @@ export function validateMsg(msg: string): boolean {
     return false;
   }
 
-  if (msg === "" || msg.length > 50) {
+  if (msg === "" || msg.length > 80) {
     return false;
   }
 

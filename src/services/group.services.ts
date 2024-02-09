@@ -7,6 +7,7 @@ import { Users } from "../model/user.js";
 import { IUser } from "../types/user.type.js";
 import { GroupChats } from "../model/groupChat.js";
 import { IGroupChat } from "../types/chat.type.js";
+import { log } from "console";
 
 export async function createGroup(
   userInput: createGroupType,
@@ -76,6 +77,10 @@ export async function leaveGroup(groupId: string, userId: Types.ObjectId) {
 
   if (!groups) {
     return serviceResult(true, "groups is not present", 404);
+  }
+
+  if (groups.admin.equals(userId)) {
+    return serviceResult(true, "You are admin of this group.", 403);
   }
 
   let isPresent = false;
@@ -216,6 +221,11 @@ export async function createMessage(
     message,
   })) as IGroupChat;
 
+  await groupChat.populate({
+    path: "sender",
+    select: "_id username",
+  });
+
   if (!groupChat) {
     return serviceResult(
       true,
@@ -224,7 +234,7 @@ export async function createMessage(
     );
   }
 
-  return serviceResult(false, "message sent", 200, GroupChats);
+  return serviceResult(false, "message sent", 200, groupChat);
 }
 
 export async function groupAdmin(groupId: string, userId: Types.ObjectId) {

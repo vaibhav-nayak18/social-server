@@ -46,6 +46,10 @@ export class SocketServer {
     return true;
   }
 
+  getUser(userId: string): string | undefined {
+    return this.users.get(userId)?.socketId;
+  }
+
   setGroup(groupId: string, userId: string): void {
     const isPresent = this.groups.has(groupId);
 
@@ -55,6 +59,12 @@ export class SocketServer {
 
     this.groups.get(groupId)?.add(userId);
     this.users.get(userId)?.groupIds.add(groupId);
+  }
+
+  setGroups(groupId: string, users: string[]): void {
+    users.forEach((val) => {
+      this.setGroup(groupId, val);
+    });
   }
 
   removeUser(socketId: string): boolean {
