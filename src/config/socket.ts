@@ -15,17 +15,6 @@ io.on("connection", (socket) => {
   socket.on("join user", (data: string) => {
     try {
       socketServer.setUser(socket.id, data);
-      log("hello ", socketServer.getUser(data));
-    } catch (error) {
-      log("error", error);
-    }
-  });
-
-  socket.on("join group", (data: { groupId: string; users: string[] }) => {});
-
-  socket.on("disconnect", () => {
-    try {
-      socketServer.removeUser(socket.id);
     } catch (error) {
       log("error", error);
     }
@@ -51,33 +40,73 @@ io.on("connection", (socket) => {
     },
   );
 
-  socket.on(
-    "group message",
-    (data: { senderId: string; groupId: string; msg: string }) => {
-      try {
-        log("data", data);
-      } catch (error) {
-        log("error", error);
-      }
-    },
-  );
+  socket.on("join groups", (data: { userId: string; groupIds: string[] }) => {
+    try {
+      socketServer.setGroups(data.groupIds, data.userId);
+    } catch (error) {
+      log("error", error);
+    }
+  });
 
-  socket.on(
-    "send friend request",
-    (data: { senderId: string; receiverId: string }) => {
-      try {
-        log("data", data);
-      } catch (error) {
-        log("error", error);
-      }
-    },
-  );
+  socket.on("group message", (data: { groupId: string }) => {
+    try {
+      log("data", data);
+      const groups = socketServer.getGroups(data.groupId);
+
+      log("Groups", groups);
+      groups?.forEach((val) => {
+        const socketId = socketServer.getUser(val);
+        if (socketId) {
+          socket.to(socketId).emit("group message", data);
+        }
+      });
+    } catch (error) {
+      log("error", error);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    try {
+      socketServer.removeUser(socket.id);
+    } catch (error) {
+      log("error", error);
+    }
+  });
 
   socket.on(
     "friend request",
-    (data: { requestId: string; userId: string; isAccept: boolean }) => {
+    (data: { friend: { _id: string; username: string } }) => {
       try {
-        log("data", data);
+        const socketId = socketServer.getUser(data.friend._id);
+        if (socketId) {
+          socket.to(socketId).emit("friend request", data);
+        }
+      } catch (error) {
+        log("error", error);
+      }
+    },
+  );
+
+  socket.on("accept friend request", (data: { friend: { _id: string } }) => {
+    try {
+      log("data", data);
+      const socketId = socketServer.getUser(data.friend._id);
+      if (socketId) {
+        socket.to(socketId).emit("accept friend request", data);
+      }
+    } catch (error) {
+      log("error", error);
+    }
+  });
+
+  socket.on(
+    "remove user",
+    (data: { id: string; username: string; to: string }) => {
+      try {
+        const socketId = socketServer.getUser(data?.to);
+        if (socketId) {
+          socket.to(socketId).emit("remove user", data);
+        }
       } catch (error) {
         log("error", error);
       }

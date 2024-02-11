@@ -82,6 +82,11 @@ export async function createFriendRequest(createrId: string, friendId: string) {
     to: friendId,
   });
 
+  await request.populate({
+    path: "senderId",
+    select: "_id username",
+  });
+
   if (!request) {
     return serviceResult(true, "Something went wrong", 500);
   }

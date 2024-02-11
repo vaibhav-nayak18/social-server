@@ -1,5 +1,4 @@
 import { log } from "console";
-import { Socket } from "socket.io";
 
 type user = {
   socketId: string;
@@ -50,6 +49,11 @@ export class SocketServer {
     return this.users.get(userId)?.socketId;
   }
 
+  getGroups(groupId: string): Set<string> | undefined {
+    const groups = this.groups.get(groupId);
+    return groups;
+  }
+
   setGroup(groupId: string, userId: string): void {
     const isPresent = this.groups.has(groupId);
 
@@ -61,9 +65,9 @@ export class SocketServer {
     this.users.get(userId)?.groupIds.add(groupId);
   }
 
-  setGroups(groupId: string, users: string[]): void {
-    users.forEach((val) => {
-      this.setGroup(groupId, val);
+  setGroups(groupIds: string[], userId: string): void {
+    groupIds.forEach((val) => {
+      this.setGroup(val, userId);
     });
   }
 
